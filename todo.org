@@ -17,17 +17,18 @@
 ** Keywords
 - In addition to the setup/main distinction of keywords, they can also be split between graphical and logical operations. Logical operations will only affect the internal state of the ScriptVM, whilst graphical operations will have a visual effect onscreen
 
-*** Setup
-- speaker x y z :: Set a speaker alias x (character), with name y and colour 
-- var x &y :: Initialize variable X with optional value Y
-*** Normal
-- set x y :: Set global x to string y
-- bg x :: Set the background image to x (see image paths)
-- show x :: Show Image x (see image paths)
-- menu :: Show a menu with suboptions (see menu section)
-- jump :: Jump to label
-- if :: conditional statement on global
-- fin x :: End VN, showing text x
+|---------+-------+-------------------+-----------------------------------------------------------|
+| Keyword | args  | type              | description                                               |
+|---------+-------+-------------------+-----------------------------------------------------------|
+| speaker | x y z | setup/logical     | Set a speaker alias x (character), with name y and colour |
+| var     | x &y  | setup/logical     | :: Initialize variable X with optional value Y            |
+| set     | x y   | logical           | Set global x to string y                                  |
+| bg      | x     | graphical         | Set the background image to x (see image paths)           |
+| show    | x     | graphical         | Show Image x (see image paths)                            |
+| menu    | &x..  | graphical/logical | Show a menu with suboptions (see menu section)            |
+| jump    | x     | logical           | Jump to label X                                           |
+| if      | x &y  | logical           | conditional statement on global var, see if section       |
+| fin     | x     | logical           | End VN, showing text x                                    |
 
 Internally any "setup" keywords (speaker, var) are stripped on inital parse, leaving only the statements.
 
