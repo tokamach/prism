@@ -1,0 +1,49 @@
+* Visual Novel engine in c++
+* misc notes
+** Script
+** global var store
+
+* Parsing
+** Design script format
+** Create parser for scripts format
+
+* Script Format
+- script begins with a setup block, where speakers are defined
+- followed by a main block, which contains individually labeled sections
+- all non setup keywords must be contained within a labeled section
+- setup keywords can be either at the root point or within a labeled section
+
+** TODO BNF 
+** Keywords
+- In addition to the setup/main distinction of keywords, they can also be split between graphical and logical operations. Logical operations will only affect the internal state of the ScriptVM, whilst graphical operations will have a visual effect onscreen
+
+*** Setup
+- speaker x y z :: Set a speaker alias x (character), with name y and colour 
+- var x &y :: Initialize variable X with optional value Y
+*** Normal
+- set x y :: Set global x to string y
+- bg x :: Set the background image to x (see image paths)
+- show x :: Show Image x (see image paths)
+- menu :: Show a menu with suboptions (see menu section)
+- jump :: Jump to label
+- if :: conditional statement on global
+- fin x :: End VN, showing text x
+
+Internally any "setup" keywords (speaker, var) are stripped on inital parse, leaving only the statements.
+
+* Architecture
+** Script VM
+Prism can be viewed as an interpreter for the Prism Script language. It's only state is the global variables based on user decisions, and the current position in the script itself.
+
+The ScriptVM class performs the tasks that the prism main loop would do, but headless
+
+** Main loop
+1. Iterate to next item in scripts
+2. Parse script command (show image, show text, show menu)
+3. Perform relevant action, whether logical or graphical
+4. (optional) Accept user input from menu
+
+* Util
+** Setup build scripts for crsfml and voidsfml library deployment
+** Write utility to convert to Prismscript from other formats, such as Ren'Py
+   
