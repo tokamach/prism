@@ -1,6 +1,6 @@
-#include<vector>
-#include<string>
-#include<map>
+#include <vector>
+#include <string>
+#include <map>
 #include "script.hpp"
 
 using std::vector;
@@ -32,31 +32,31 @@ void ScriptVM::step()
 {
     switch(script[scriptPos].statementComponent)
     {
-    case Statement::Speaker:
+    case Keyword::Speaker:
 	break;
 
-    case Statement::Var:
+    case Keyword::Var:
 	break;
 
-    case Statement::Set:
+    case Keyword::Set:
 	break;
 
-    case Statement::Bg:
+    case Keyword::Bg:
 	break;
 
-    case Statement::Show:
+    case Keyword::Show:
 	break;
 
-    case Statement::Menu:
+    case Keyword::Menu:
 	break;
 
-    case Statement::Jump:
+    case Keyword::Jump:
 	break;
 
-    case Statement::If:
+    case Keyword::If:
 	break;
 
-    case Statement::Fin:
+    case Keyword::Fin:
 	break;
     }
 }

@@ -6,26 +6,26 @@ using std::vector;
 using std::string;
 using std::map;
 
-enum class Statement
+const string KEYWORDS[] = 
 {
-    Speaker,
-    Var,
-    Set,
-    Bg,
-    Show,
-    Menu,
-    Jump,
-    If,
-    Fin
+    "speaker",
+    "var",
+    "set",
+    "bg",
+    "show",
+    "menu",
+    "jump",
+    "if",
+    "fin"
 };
 
 class ScriptElem
 {
 public:
-    Statement statementComponent;
+    Keyword statementComponent;
     vector<string> stringComponent;
 
-    ScriptElem(Statement _sta, vector<string> _str)
+    ScriptElem(Keyword _sta, vector<string> _str)
     {
 	statementComponent = _sta;
 	stringComponent = _str;
@@ -35,16 +35,15 @@ public:
     {
 	switch(statementComponent)
 	{
-	case Statement::Speaker:
-	case Statement::Bg:
-	case Statement::Show:
-	case Statement::Fin:
+	case Keyword::Speaker:
+	case Keyword::Bg:
+	case Keyword::Show:
+	case Keyword::Fin:
 	    return true;
 	default:
 	    return false;
 	}
     }
-    
 };
 
 //TODO: implement Iterator class
