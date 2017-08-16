@@ -6,13 +6,14 @@
 
 * Script Format
 - script begins with a setup block, where speakers are defined
-- followed by a main block, which contains individually labeled sections
+- followed by individually labeled sections
+- setup keywords must be within setup block
 - all non setup keywords must be contained within a labeled section
-- setup keywords can be either at the root point or within a labeled section
+- MUST END WITH EMPTY LINE
 
 ** TODO BNF 
 ** Keywords
-- In addition to the setup/main distinction of keywords, they can also be split between graphical and logical operations. Logical operations will only affect the internal state of the ScriptVM, whilst graphical operations will have a visual effect onscreen
+In addition to the setup/main distinction of keywords, they can also be split between graphical and logical operations. Logical operations will only affect the internal state of the ScriptVM, whilst graphical operations will have a visual effect onscreen
 
 |---------+-------+-------------------+-----------------------------------------------------|
 | Keyword | args  | type              | description                                         |
@@ -22,12 +23,50 @@
 | set     | x y   | logical           | Set global x to string y                            |
 | bg      | x     | graphical         | Set the background image to x (see image paths)     |
 | show    | x     | graphical         | Show Image x (see image paths)                      |
-| menu    | &x..  | graphical/logical | Show a menu with suboptions (see menu section)      |
+| menu    | x y   | graphical/logical | Show a menu options x to jump to labels y           |
 | jump    | x     | logical           | Jump to label X                                     |
 | if      | x &y  | logical           | conditional statement on global var, see if section |
 | fin     | x     | logical           | End VN, showing text x                              |
 
 Internally any "setup" keywords (speaker, var) are stripped on inital parse, leaving only the statements.
+
+*** menu keyword
+the menu keyword is followed by 2 or more pairs consisting of a string and label. These are contained within square brackets, and seperated internally by a pipe '|' character. As below:
+: [option text | label]
+When the user selects an option, the label will be jumped to.
+
+** Example short script
+#+BEGIN_EXAMPLE
+setup
+{
+    speaker a A blue
+    speaker b B red
+    var ret
+}
+
+good
+{
+
+}
+
+bad
+{
+
+}
+
+main
+{
+   bg room
+   show a/normal
+   a Hi there friend.
+
+   show b/normal
+   b What's up my dude.
+
+   menu [All good my G. | good]
+        [Not so good my man. | bad]
+}
+#+END_EXAMPLE
 
 * Architecture
 ** Script VM
