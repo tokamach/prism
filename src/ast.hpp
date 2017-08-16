@@ -146,5 +146,8 @@ class NodeNone : public Node
 
 class AST 
 {
-    
+    NodeSetup setupBlock;
+    list<NodeLabel> labels;
+
+    AST() { }
 };
