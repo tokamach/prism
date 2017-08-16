@@ -1,8 +1,5 @@
+# -*- olivetti-body-width: 94; -*-
 * Visual Novel engine in c++
-* misc notes
-** Script
-** global var store
-
 * Parsing
 ** Design script format
 ** Create parser for scripts format
@@ -17,18 +14,18 @@
 ** Keywords
 - In addition to the setup/main distinction of keywords, they can also be split between graphical and logical operations. Logical operations will only affect the internal state of the ScriptVM, whilst graphical operations will have a visual effect onscreen
 
-|---------+-------+-------------------+-----------------------------------------------------------|
-| Keyword | args  | type              | description                                               |
-|---------+-------+-------------------+-----------------------------------------------------------|
-| speaker | x y z | setup/logical     | Set a speaker alias x (character), with name y and colour |
-| var     | x &y  | setup/logical     | :: Initialize variable X with optional value Y            |
-| set     | x y   | logical           | Set global x to string y                                  |
-| bg      | x     | graphical         | Set the background image to x (see image paths)           |
-| show    | x     | graphical         | Show Image x (see image paths)                            |
-| menu    | &x..  | graphical/logical | Show a menu with suboptions (see menu section)            |
-| jump    | x     | logical           | Jump to label X                                           |
-| if      | x &y  | logical           | conditional statement on global var, see if section       |
-| fin     | x     | logical           | End VN, showing text x                                    |
+|---------+-------+-------------------+-----------------------------------------------------|
+| Keyword | args  | type              | description                                         |
+|---------+-------+-------------------+-----------------------------------------------------|
+| speaker | x y z | setup/logical     | Set a speaker alias x , with full name y and colour |
+| var     | x &y  | setup/logical     | Initialize variable X with optional value Y         |
+| set     | x y   | logical           | Set global x to string y                            |
+| bg      | x     | graphical         | Set the background image to x (see image paths)     |
+| show    | x     | graphical         | Show Image x (see image paths)                      |
+| menu    | &x..  | graphical/logical | Show a menu with suboptions (see menu section)      |
+| jump    | x     | logical           | Jump to label X                                     |
+| if      | x &y  | logical           | conditional statement on global var, see if section |
+| fin     | x     | logical           | End VN, showing text x                              |
 
 Internally any "setup" keywords (speaker, var) are stripped on inital parse, leaving only the statements.
 
@@ -45,6 +42,4 @@ The ScriptVM class performs the tasks that the prism main loop would do, but hea
 4. (optional) Accept user input from menu
 
 * Util
-** Setup build scripts for crsfml and voidsfml library deployment
 ** Write utility to convert to Prismscript from other formats, such as Ren'Py
-   
