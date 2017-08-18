@@ -1,15 +1,16 @@
 # -*- olivetti-body-width: 94; -*-
 * Visual Novel engine in c++
 * Parsing
-** Design script format
-** Create parser for scripts format
+** Create lexer for script
+Tokenize script into Vector or List of Tokens, containing metadata like line number as well
+** Create parser for lexed script
+Simple Finite State Automaton should be fine, as the script format currently does not allow nested labels and will not need to be a Pushdown Automaton or LL(1) parser.
 
-* Script Format
+* Script
 - script begins with a setup block, where speakers are defined
 - followed by individually labeled sections
 - setup keywords must be within setup block
 - all non setup keywords must be contained within a labeled section
-- MUST END WITH EMPTY LINE
 
 ** TODO BNF 
 ** Keywords
@@ -75,10 +76,10 @@ Prism can be viewed as an interpreter for the Prism Script language. It's only s
 The ScriptVM class performs the tasks that the prism main loop would do, but headless
 
 ** Main loop
-1. Iterate to next item in scripts
+1. Iterate to next item in script
 2. Parse script command (show image, show text, show menu)
-3. Perform relevant action, whether logical or graphical
-4. (optional) Accept user input from menu
+3. (optional) Accept user input from menu
+4. Perform relevant action, whether logical or graphical
 
 * Util
 ** Write utility to convert to Prismscript from other formats, such as Ren'Py
