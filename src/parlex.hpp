@@ -1,29 +1,61 @@
 #include <string>
 #include <fstream>
+#include <vector>
 #include "ast.hpp"
 
 using std::string;
 using std::ifstream;
+using std::vector;
 
-// Script parser
-class Parser
+namespace Parlex
 {
-public:
-    ifstream parseFile;
+    enum class Category
+    {
+	KEYWORD,
+	IDENTIFIER,
+	ARGUMENT,
+	EOS,
+	DELIM_OPEN,
+	DELIM_CLOSE,
+	DELIM_MID,
+	COMPARISON_OPERATOR
+    }
 
-    //Finite State Machine variables
-    bool inSetup;
-    bool inLabel;
-    std::string labelName;
-    char expectingChar;
+    class Token
+    {
+	string val;
+	Category cat;
 
-    //parse from string for now, add files later
-    Parser(const char *filename);
+	Token(string _val, Category _cat)
+	{
+	    val = _val;
+	    cat = _cat;
+	}
+    };
+    
+    class Lexer
+    {
+    public:
+	Lexer(ifstream _file);
+	vector<Token> lex();
 
-    AST parse();
-    string expect(char expecting);
-//  AST parseFile(const *char filename);
-
-private:
-    parseStep(AST* workTree, string workString);
-};
+    private:
+	ifstream file;
+	string curString;
+	void next();
+    };
+    
+    class Parser
+    {
+    public:
+	//Finite State Machine variables
+	bool inSetup;
+	bool inLabel;
+	std::string labelName;
+	
+	Parser(vector<LexerToken> tokVec);
+	
+	*AST parse();
+    };
+    
+}

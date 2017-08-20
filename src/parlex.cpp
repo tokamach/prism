@@ -1,42 +1,53 @@
 #include <string>
 #include <fstream>
+#include <vector>
 #include "parlex.hpp"
 #include "ast.hpp"
 
 using std::string;
 using std::ifstream;
+using std::vector;
 
-Parser::Parser(const char *filename)
+namespace Parlex
 {
-    parseFile.open(filename);
-}
-
-//seek through file until find an instance of char
-string Parser::expect(char expecting)
-{
-    std::string ret;
-    std::getline(parseFile, ret, expecting);
-    return ret;
-}
-
-AST Parser::parseStep(AST *workTree, string workString)
-{
-
-}
-
-AST Parser::parse()
-{
-    AST tree = new AST();
-
-    while(parseString.find('\n') != string::npos)
+    Lexer::Lexer(ifstream _file)
     {
-	//get a single line to work on
-	int index = parseString.find('\n');
-	string workLine = parseString.substr(0, index);
+	file = _file;
+    }
 
-	parseStep(&tree, workLine);
+    vector<Token> Lexer::lex()
+    {
+	const char delimiters[] = {' ', '\n', '{', '['};
+	char c;
 
-	//chomp off parsed line
-	parseString = parseString.substr(index);
+	do {
+	    c = file.get();
+	} while (c != ' '  &&
+	         c != '\n' &&
+	         c != '{'  &&
+	         c != '[')
+	
+    }
+    
+    Parser::Parser(vector<LexerToken> tokVec)
+    {
+	
+    }
+    
+    *AST Parser::parse()
+    {
+	AST *tree = new AST();
+	
+	while(parseString.find('\n') != string::npos)
+	{
+	    //get a single line to work on
+	    int index = parseString.find('\n');
+	    string workLine = parseString.substr(0, index);
+	    
+	    parseStep(&tree, workLine);
+	    
+	    //chomp off parsed line
+	    parseString = parseString.substr(index);
+	}
     }
 }
