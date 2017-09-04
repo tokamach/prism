@@ -1,6 +1,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+
 #include "ast.hpp"
 
 using std::string;
@@ -13,6 +14,7 @@ namespace Parlex
     {
 	KEYWORD,
 	IDENTIFIER,
+	LITERAL,
 	ARGUMENT,
 	EOS,
 	DELIM_OPEN,
@@ -21,16 +23,10 @@ namespace Parlex
 	COMPARISON_OPERATOR
     }
 
-    class Token
+    struct Token
     {
 	string val;
 	Category cat;
-
-	Token(string _val, Category _cat)
-	{
-	    val = _val;
-	    cat = _cat;
-	}
     };
     
     class Lexer
@@ -40,9 +36,10 @@ namespace Parlex
 	vector<Token> lex();
 
     private:
+	void advance();
 	ifstream file;
-	string curString;
-	void next();
+	string curLine;
+//      void next();
     };
     
     class Parser

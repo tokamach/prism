@@ -1,7 +1,9 @@
+#include "parlex.hpp"
+
 #include <string>
 #include <fstream>
 #include <vector>
-#include "parlex.hpp"
+
 #include "ast.hpp"
 
 using std::string;
@@ -15,21 +17,41 @@ namespace Parlex
 	file = _file;
     }
 
+    Token Lexer::doLine(string str)
+    {
+
+    }
+
+    Lexer::until(char c)
+    {
+	char next;
+//	while()
+    }
+
     vector<Token> Lexer::lex()
     {
 	const char delimiters[] = {' ', '\n', '{', '['};
 	char c;
+	string str;
+	bool done = false;;
 
 	do {
-	    c = file.get();
-	} while (c != ' '  &&
-	         c != '\n' &&
-	         c != '{'  &&
-	         c != '[')
-	
+	    while (1) {
+		c = file.get();
+		
+		if(c != ' '  &&
+		   c != '\n' &&
+		   c != '{'  &&
+		   c != '[') {
+		    str.append(c);
+		}
+	    }
+
+	    //done = true;
+	} while (!done)
     }
     
-    Parser::Parser(vector<LexerToken> tokVec)
+    Parser::Parser(vector<Token> tokVec)
     {
 	
     }

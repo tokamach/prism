@@ -1,7 +1,8 @@
+#include "script.hpp"
+
 #include <vector>
 #include <string>
 #include <map>
-#include "script.hpp"
 
 using std::vector;
 using std::string;
