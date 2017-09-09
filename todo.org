@@ -6,13 +6,14 @@ Tokenize script into Vector or List of Tokens, containing metadata like line num
 ** Create parser for lexed script
 Simple Finite State Automaton should be fine, as the script format currently does not allow nested labels and will not need to be a Pushdown Automaton or LL(1) parser.
 
+Or go all out and do an RDP
+
 * Script
 - script begins with a setup block, where speakers are defined
 - followed by individually labeled sections
 - setup keywords must be within setup block
 - all non setup keywords must be contained within a labeled section
 
-** TODO BNF 
 ** Keywords
 In addition to the setup/main distinction of keywords, they can also be split between graphical and logical operations. Logical operations will only affect the internal state of the ScriptVM, whilst graphical operations will have a visual effect onscreen
 
@@ -33,7 +34,7 @@ Internally any "setup" keywords (speaker, var) are stripped on inital parse, lea
 
 *** menu keyword
 the menu keyword is followed by 2 or more pairs consisting of a string and label. These are contained within square brackets, and seperated internally by a pipe '|' character. As below:
-: [option text | label]
+: [text | label]
 When the user selects an option, the label will be jumped to.
 
 ** Example short script
@@ -47,12 +48,16 @@ setup
 
 good
 {
-
+  show b/happy
+  b Good to hear.
+  fin Congrats
 }
 
 bad
 {
-
+  show b/sad
+  b Shame my guy.
+  fin RIP u
 }
 
 main
