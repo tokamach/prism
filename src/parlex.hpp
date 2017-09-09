@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <fstream>
 #include <vector>
@@ -21,7 +23,7 @@ namespace Parlex
 	DELIM_CLOSE,
 	DELIM_MID,
 	COMPARISON_OPERATOR
-    }
+    };
 
     struct Token
     {
@@ -32,14 +34,17 @@ namespace Parlex
     class Lexer
     {
     public:
-	Lexer(ifstream _file);
+	Lexer(ifstream* _file);
 	vector<Token> lex();
 
     private:
-	void advance();
-	ifstream file;
-	string curLine;
-//      void next();
+	bool advance();
+	bool advance(char c);
+	void doSection();
+	void doSetup();
+	ifstream* file;
+	vector<Token> tokens;
+	string cur;
     };
     
     class Parser
@@ -50,9 +55,9 @@ namespace Parlex
 	bool inLabel;
 	std::string labelName;
 	
-	Parser(vector<LexerToken> tokVec);
+	Parser(vector<Token> tokVec);
 	
-	*AST parse();
+	AST* parse();
     };
     
 }

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <fstream>
+#include <iostream>
 #include <vector>
 
 #include "ast.hpp"
@@ -12,43 +13,57 @@ using std::vector;
 
 namespace Parlex
 {
-    Lexer::Lexer(ifstream _file)
+    Lexer::Lexer(ifstream* _file)
     {
 	file = _file;
     }
 
-    Token Lexer::doLine(string str)
+    void Lexer::doSection()
     {
-
+	
     }
 
-    Lexer::until(char c)
+    void Lexer::doSetup()
     {
-	char next;
-//	while()
+	advance();
+	tokens.push_back(Token {cur, Category::IDENTIFIER});
+	advance();
+	tokens.push_back(Token {cur, Category::DELIM_OPEN});
+
+	advance();
+	while(cur != "}")
+	{
+	    tokens.push_back(Token {cur, Category::KEYWORD});
+	    advance(' ');
+	}
+    }
+
+    bool Lexer::advance()
+    {
+	//try read next line, if returns false we done
+	if(std::getline(*file, cur))
+	{
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    bool Lexer::advance(char c)
+    {
+	if(std::getline(*file, cur, c))
+	{
+	    return true;
+	} else {
+	    return false;
+	}
     }
 
     vector<Token> Lexer::lex()
     {
-	const char delimiters[] = {' ', '\n', '{', '['};
-	char c;
-	string str;
-	bool done = false;;
-
-	do {
-	    while (1) {
-		c = file.get();
-		
-		if(c != ' '  &&
-		   c != '\n' &&
-		   c != '{'  &&
-		   c != '[') {
-		    str.append(c);
-		}
-	    }
-
-	    //done = true;
-	} while (!done)
+//	doSetup();
+	advance('{');
+	std::cout << cur;
     }
     
     Parser::Parser(vector<Token> tokVec)
@@ -56,20 +71,10 @@ namespace Parlex
 	
     }
     
-    *AST Parser::parse()
+    AST* Parser::parse()
     {
 	AST *tree = new AST();
-	
-	while(parseString.find('\n') != string::npos)
-	{
-	    //get a single line to work on
-	    int index = parseString.find('\n');
-	    string workLine = parseString.substr(0, index);
-	    
-	    parseStep(&tree, workLine);
-	    
-	    //chomp off parsed line
-	    parseString = parseString.substr(index);
-	}
+
+	return tree;
     }
 }
