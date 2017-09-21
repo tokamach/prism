@@ -1,40 +1,43 @@
 #include "parlex.hpp"
 
 #include <string>
+#include <sstream>
 #include <fstream>
-#include <iostream>
 #include <vector>
+#include <iostream>
+#include <regex>
+#include <utility>
 
 #include "ast.hpp"
 
 using std::string;
+using std::stringstream;
 using std::ifstream;
 using std::vector;
+using std::regex;
+using std::pair;
 
 namespace Parlex
 {
     Lexer::Lexer(ifstream* _file)
     {
 	file = _file;
+	regex_sub_list = {{regex("(speaker|var|set|bg|show|menu|jump|if|fin)[.\\s]*"), "KEYWORD"},
+	                  {regex("red|orange|yellow|green|blue|purple|pink"), "IDENTIFIER_COLOUR"},
+			  {regex("[{}]"), "PUNCTUATION"},
+	                  {regex("[a-z]+"), "IDENTIFIER"}};
     }
 
-    void Lexer::doSection()
+    void Lexer::back()
     {
-	
+	file->unget();
     }
 
-    void Lexer::doSetup()
+    void Lexer::back(int n)
     {
-	advance();
-	tokens.push_back(Token {cur, Category::IDENTIFIER});
-	advance();
-	tokens.push_back(Token {cur, Category::DELIM_OPEN});
-
-	advance();
-	while(cur != "}")
+	for(int i = 0; i < n; i++)
 	{
-	    tokens.push_back(Token {cur, Category::KEYWORD});
-	    advance(' ');
+	    file->unget();
 	}
     }
 
@@ -61,9 +64,26 @@ namespace Parlex
 
     vector<Token> Lexer::lex()
     {
-//	doSetup();
-	advance('{');
-	std::cout << cur;
+	while(advance())
+	{
+	    stringstream ss(cur);
+	    do
+	    {
+		string w;
+		ss >> w;
+
+		for(auto r : regex_sub_list)
+		{
+		    if(std::regex_match(w, r.first))
+		    {
+			tokens.push_back(Token {w, r.second});
+			break;
+		    }
+		}
+	    } while (ss);
+	}
+
+	return tokens;
     }
     
     Parser::Parser(vector<Token> tokVec)

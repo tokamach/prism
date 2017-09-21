@@ -3,32 +3,23 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <regex>
+#include <utility>
 
 #include "ast.hpp"
 
 using std::string;
 using std::ifstream;
 using std::vector;
+using std::regex;
+using std::pair;
 
 namespace Parlex
 {
-    enum class Category
-    {
-	KEYWORD,
-	IDENTIFIER,
-	LITERAL,
-	ARGUMENT,
-	EOS,
-	DELIM_OPEN,
-	DELIM_CLOSE,
-	DELIM_MID,
-	COMPARISON_OPERATOR
-    };
-
     struct Token
     {
 	string val;
-	Category cat;
+	string cat;
     };
     
     class Lexer
@@ -40,11 +31,13 @@ namespace Parlex
     private:
 	bool advance();
 	bool advance(char c);
-	void doSection();
-	void doSetup();
+	void back();
+	void back(int n);
+
 	ifstream* file;
 	vector<Token> tokens;
 	string cur;
+	vector<pair<regex, string>> regex_sub_list;
     };
     
     class Parser
