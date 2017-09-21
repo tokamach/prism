@@ -2,16 +2,19 @@
 * Visual Novel engine in c++
 * Parsing
 ** Create lexer for script
-Tokenize script into Vector or List of Tokens, containing metadata like line number as well
+- Tokenize script into Vector or List of Tokens, containing metadata like line number as well
+- don't forget to keep track of scope (section/menu block)
+- create symbol table for use in internal tagging and to pass to parser
+- can't be only regex, and pure hand is a pain, you have to make it a hybrid
 ** Create parser for lexed script
-Simple Finite State Automaton should be fine, as the script format currently does not allow nested labels and will not need to be a Pushdown Automaton or LL(1) parser.
-
-Or go all out and do an RDP
+- Simple Finite State Automaton should be fine, as the script format currently does not allow nested labels and will not need to be a Pushdown Automaton or LL(1) parser.
+- Or go all out and do an RDP
 
 * Script
 - script begins with a setup block, where speakers are defined
 - followed by individually labeled sections
 - setup keywords must be within setup block
+- must contain a "main" section
 - all non setup keywords must be contained within a labeled section
 
 ** Keywords
