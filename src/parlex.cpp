@@ -7,6 +7,7 @@
 #include <iostream>
 #include <regex>
 #include <utility>
+#include <iostream>
 
 #include "ast.hpp"
 
@@ -22,9 +23,10 @@ namespace Parlex
     Lexer::Lexer(ifstream* _file)
     {
 	file = _file;
-	regex_sub_list = {{regex("(speaker|var|set|bg|show|menu|jump|if|fin)[.\\s]*"), "KEYWORD"},
+	regex_sub_list = {{regex("speaker|var|set|bg|show|menu|jump|if|fin"), "KEYWORD"},
 	                  {regex("red|orange|yellow|green|blue|purple|pink"), "IDENTIFIER_COLOUR"},
-			  {regex("[{}]"), "PUNCTUATION"},
+			  {regex("[{}\\[\\]\\|]"), "PUNCTUATION"},
+			  {regex("(\\[|\\|)(\\w| )+(\\]|\\|)"), "STRING"},
 	                  {regex("[a-z]+"), "IDENTIFIER"}};
     }
 
@@ -71,6 +73,8 @@ namespace Parlex
 	    {
 		string w;
 		ss >> w;
+
+		std::cout << w ;
 
 		for(auto r : regex_sub_list)
 		{
