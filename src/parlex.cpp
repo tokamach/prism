@@ -33,6 +33,8 @@ namespace Parlex
 		      {"STRING",       regex("(\\[|\\|)(\\w| )+(\\]|\\|)")},
 		      {"SETUP",        regex("setup")},
 		      {"WORD",         regex("[a-z]+")}};
+	advanceLine(); //just to get started
+	advanceWord();
     }
 
     void Lexer::back()
@@ -48,73 +50,88 @@ namespace Parlex
 	}
     }
 
-    bool Lexer::advance()
+    bool Lexer::advanceLine()
     {
 	//try read next line, if returns false we done
+	string cur;
 	if(std::getline(*file, cur))
 	{
+	    cur_line_ss = std::stringstream(cur);
 	    return true;
 	} else {
 	    return false;
 	}
     }
 
-    bool Lexer::advance(char c)
+    //move ahead one word, line if necessary
+    bool Lexer::advanceWord()
     {
-	if(std::getline(*file, cur, c))
+	if(!cur_line_ss)
 	{
-	    return true;
+	    if(!advanceLine())
+	    {
+		//file done
+		return false;
+	    } else {
+		cur_line_ss >> w;
+		return true;
+	    }
 	} else {
-	    return false;
+	    cur_line_ss >> w;
+	    return true;
 	}
+
     }
 
     vector<Token> Lexer::lex()
     {
-	//move ahead one line
-	//TODO: move to pure word based
-	while(advanceLine())
+	while(advanceWord())
 	{
-	    //streamify line and do word by word
-	    //TODO: internalize this to the class
-	    stringstream ss(cur);
-	    do
-	    {
-		string w;
-		ss >> w;
-
-		if(context.top == ScopeFrame::Root)
+		if(context.top() == ScopeFrame::Root)
 		{
-		    if(std::regex_match(w, r["SETUP"]))
+		    if(std::regex_match(w, regex_list["SETUP"]))
 		    {
 			tokens.push_back(Token {w, "SETUP"});
-		    }
-		    else if(std::regex_match(w, r["WORD"]))
-		    {
-			tokens.push_back(Token {w, "IDENT"});
-		    }
-		    else if(std::regex_match(w, r["PUNC_OPEN"]))
-		    {
-			tokens.push_back(Token {w, "PUNC_OPEN"});
-			contex.push(ScopeFrame::Setup;)
-		    }
-		}
-
-		if(context.top == ScopeFrame::Section ||
-		   context.top == ScopeFrame::Setup)
-		{
-		    //check if word is keyword
-		    if(std::regex_match(w, r["KEYWORD"]))
-		    {
-			if() {
-			    tokens.push_back(Token {w, "KEYWORD"});
-			    break;
-			} else {
-			    throw "[LEXER] Keyword used in wrong context";
+			advanceWord();
+			if(std::regex_match(w, regex_list["PUNC_OPEN"]))
+			{
+			    tokens.push_back(Token {w, "PUNC_OPEN"});
+			    context.push(ScopeFrame::Setup);
+			}
+			else
+			{
+			    throw "[Lexer] No { after setup label";
 			}
 		    }
+		    else if(std::regex_match(w, regex_list["WORD"]))
+		    {
+			tokens.push_back(Token {w, "IDENT"});
+			advanceWord();
+			if(std::regex_match(w, regex_list["PUNC_OPEN"]))
+			{
+			    tokens.push_back(Token {w, "PUNC_OPEN"});
+			    context.push(ScopeFrame::Section);
+			}
+			else
+			{
+			    throw "[Lexer] No { after section label";
+			}
+		    }
+		    else
+		    {
+			throw "[Lexer] Unexpected word in root"
+		    }
 		}
-	    } while (ss);
+		else if(context.top() == ScopeFrame::Section ||
+			context.top() == ScopeFrame::Setup)
+		{
+		    //check if word is keyword
+		    if(std::regex_match(w, regex_list["KEYWORD"]))
+		    {
+			tokens.push_back(Token {w, "KEYWORD"});
+			break;
+		    }
+		}
 	}
 	return tokens;
     }

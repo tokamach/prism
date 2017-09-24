@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <sstream>
 #include <fstream>
 #include <vector>
 #include <regex>
@@ -41,14 +42,16 @@ namespace Parlex
 	vector<Token> lex();
 
     private:
-	bool advance();
-	bool advance(char c);
+	bool advanceLine();
+	bool advanceWord();
 	void back();
 	void back(int n);
 
 	ifstream* file;
+	std::stringstream cur_line_ss;
+	string w;
+
 	vector<Token> tokens;
-	string cur;
 	map<string, regex> regex_list;
 	stack<ScopeFrame> context;
     };
