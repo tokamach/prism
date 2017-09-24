@@ -4,7 +4,8 @@
 #include <fstream>
 #include <vector>
 #include <regex>
-#include <utility>
+#include <stack>
+#include <map>
 
 #include "ast.hpp"
 
@@ -12,10 +13,21 @@ using std::string;
 using std::ifstream;
 using std::vector;
 using std::regex;
-using std::pair;
+using std::stack;
+using std::map;
 
 namespace Parlex
 {
+    enum class ScopeFrame
+    {
+	Setup,
+	Section,
+	Keyword,
+	Menu,
+	Root,
+	None
+    };
+
     struct Token
     {
 	string val;
@@ -37,7 +49,8 @@ namespace Parlex
 	ifstream* file;
 	vector<Token> tokens;
 	string cur;
-	vector<pair<regex, string>> regex_sub_list;
+	map<string, regex> regex_list;
+	stack<ScopeFrame> context;
     };
     
     class Parser

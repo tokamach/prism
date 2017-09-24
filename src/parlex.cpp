@@ -6,8 +6,9 @@
 #include <vector>
 #include <iostream>
 #include <regex>
-#include <utility>
 #include <iostream>
+#include <stack>
+#include <map>
 
 #include "ast.hpp"
 
@@ -16,18 +17,22 @@ using std::stringstream;
 using std::ifstream;
 using std::vector;
 using std::regex;
-using std::pair;
+using std::stack;
+using std::map;
 
 namespace Parlex
 {
     Lexer::Lexer(ifstream* _file)
     {
 	file = _file;
-	regex_sub_list = {{regex("speaker|var|set|bg|show|menu|jump|if|fin"), "KEYWORD"},
-	                  {regex("red|orange|yellow|green|blue|purple|pink"), "IDENTIFIER_COLOUR"},
-			  {regex("[{}\\[\\]\\|]"), "PUNCTUATION"},
-			  {regex("(\\[|\\|)(\\w| )+(\\]|\\|)"), "STRING"},
-	                  {regex("[a-z]+"), "IDENTIFIER"}};
+	context.push(ScopeFrame::Root);
+	regex_list = {{"KEYWORD",      regex("speaker|var|set|bg|show|menu|jump|if|fin")},
+		      {"IDENT_COLOUR", regex("red|orange|yellow|green|blue|purple|pink")},
+		      {"PUNC_OPEN",    regex("[{\\[]")},
+		      {"PUNC_CLOSE",   regex("[}\\]]")},
+		      {"STRING",       regex("(\\[|\\|)(\\w| )+(\\]|\\|)")},
+		      {"SETUP",        regex("setup")},
+		      {"WORD",         regex("[a-z]+")}};
     }
 
     void Lexer::back()
@@ -66,27 +71,51 @@ namespace Parlex
 
     vector<Token> Lexer::lex()
     {
-	while(advance())
+	//move ahead one line
+	//TODO: move to pure word based
+	while(advanceLine())
 	{
+	    //streamify line and do word by word
+	    //TODO: internalize this to the class
 	    stringstream ss(cur);
 	    do
 	    {
 		string w;
 		ss >> w;
 
-		std::cout << w ;
-
-		for(auto r : regex_sub_list)
+		if(context.top == ScopeFrame::Root)
 		{
-		    if(std::regex_match(w, r.first))
+		    if(std::regex_match(w, r["SETUP"]))
 		    {
-			tokens.push_back(Token {w, r.second});
-			break;
+			tokens.push_back(Token {w, "SETUP"});
+		    }
+		    else if(std::regex_match(w, r["WORD"]))
+		    {
+			tokens.push_back(Token {w, "IDENT"});
+		    }
+		    else if(std::regex_match(w, r["PUNC_OPEN"]))
+		    {
+			tokens.push_back(Token {w, "PUNC_OPEN"});
+			contex.push(ScopeFrame::Setup;)
+		    }
+		}
+
+		if(context.top == ScopeFrame::Section ||
+		   context.top == ScopeFrame::Setup)
+		{
+		    //check if word is keyword
+		    if(std::regex_match(w, r["KEYWORD"]))
+		    {
+			if() {
+			    tokens.push_back(Token {w, "KEYWORD"});
+			    break;
+			} else {
+			    throw "[LEXER] Keyword used in wrong context";
+			}
 		    }
 		}
 	    } while (ss);
 	}
-
 	return tokens;
     }
     
