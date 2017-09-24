@@ -25,6 +25,7 @@ namespace Parlex
 	Section,
 	Keyword,
 	Menu,
+	Speaker,
 	Root,
 	None
     };

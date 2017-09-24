@@ -68,13 +68,20 @@ namespace Parlex
     {
 	if(!cur_line_ss)
 	{
-	    if(!advanceLine())
+	    if(w == "\n")
 	    {
-		//file done
-		return false;
-	    } else {
-		cur_line_ss >> w;
-		return true;
+		if(!advanceLine())
+		{
+		    //file done
+		    return false;
+		} else {
+		    cur_line_ss >> w;
+		    return true;
+		}
+	    }
+	    else
+	    {
+		w = "\n";
 	    }
 	} else {
 	    cur_line_ss >> w;
@@ -100,7 +107,7 @@ namespace Parlex
 			}
 			else
 			{
-			    throw "[Lexer] No { after setup label";
+			    throw std::runtime_error("[Lexer] No { after setup label");
 			}
 		    }
 		    else if(std::regex_match(w, regex_list["WORD"]))
@@ -114,12 +121,16 @@ namespace Parlex
 			}
 			else
 			{
-			    throw "[Lexer] No { after section label";
+			    throw std::runtime_error("[Lexer] No { after section label");
 			}
+		    }
+		    else if(w == "\n")
+		    {
+			
 		    }
 		    else
 		    {
-			throw "[Lexer] Unexpected word in root"
+			throw std::runtime_error("[Lexer] Unexpected word in root");
 		    }
 		}
 		else if(context.top() == ScopeFrame::Section ||
@@ -129,7 +140,20 @@ namespace Parlex
 		    if(std::regex_match(w, regex_list["KEYWORD"]))
 		    {
 			tokens.push_back(Token {w, "KEYWORD"});
-			break;
+			context.push(ScopeFrame::Keyword);
+		    }
+		    //TODO: use speaker lookup table to verify
+		    else if(std::regex_match(w, regex_list["WORD"]))
+		    {
+			tokens.push_back(Token {w, "IDENT_SPEAKER"});
+			context.push(ScopeFrame::Speaker);
+		    }
+		}
+		else if(context.top() == ScopeFrame::Keyword)
+		{
+		    if(std::regex_match(w, regex_list["WORD"]))
+		    {
+			tokens.push_back(Token {w, "ARGUMENT"});
 		    }
 		}
 	}
