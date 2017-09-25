@@ -103,93 +103,93 @@ namespace Parlex
 	    std::cout << "[DEBUG] w in loop: " << w << std::endl;
 	    if(w == "\n") {}
 	    else if(context.top() == ScopeFrame::Root)
+	    {
+		if(std::regex_match(w, regex_list["SETUP"]))
 		{
-		    if(std::regex_match(w, regex_list["SETUP"]))
+		    std::cout << "[DEBUG] Matched Setup!\n";
+		    tokens.push_back(Token {w, "SETUP"});
+		    advanceWord();
+		    
+		    if(w == "\n")
 		    {
-			std::cout << "[DEBUG] Matched Setup!\n";
-			tokens.push_back(Token {w, "SETUP"});
+			std::cout << "[DEBUG] Matched newl!\n";
 			advanceWord();
-
-			if(w == "\n")
-			{
-			    std::cout << "[DEBUG] Matched newl!\n";
-			    advanceWord();
-			}
-
-			if(std::regex_match(w, regex_list["PUNC_OPEN"]))
-			{
-			    std::cout << "[DEBUG] Matched punco!\n";
-			    tokens.push_back(Token {w, "PUNC_OPEN"});
-			    context.push(ScopeFrame::Setup);
-			}
-			else
-			{
-			    throw std::runtime_error("[Lexer] No { after setup label");
-			}
 		    }
-		    else if(std::regex_match(w, regex_list["WORD"]))
+		    
+		    if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 		    {
-			tokens.push_back(Token {w, "IDENT"});
-			advanceWord();
-
-			if(w == "\n")
-			    advanceWord();
-
-			if(std::regex_match(w, regex_list["PUNC_OPEN"]))
-			{
-			    tokens.push_back(Token {w, "PUNC_OPEN"});
-			    context.push(ScopeFrame::Section);
-			}
-			else
-			{
-			    throw std::runtime_error("[Lexer] No { after section label");
-			}
-		    }
-		    else if(w == "\n")
-		    {
+			std::cout << "[DEBUG] Matched punco!\n";
+			tokens.push_back(Token {w, "PUNC_OPEN"});
+			context.push(ScopeFrame::Setup);
 		    }
 		    else
 		    {
-			throw std::runtime_error("[Lexer] Unexpected word in root: " + w);
+			throw std::runtime_error("[Lexer] No { after setup label");
 		    }
 		}
-		else if(context.top() == ScopeFrame::Section ||
-			context.top() == ScopeFrame::Setup)
+		else if(std::regex_match(w, regex_list["WORD"]))
 		{
-		    //check if word is keyword
-		    if(std::regex_match(w, regex_list["KEYWORD"]))
+		    tokens.push_back(Token {w, "IDENT"});
+		    advanceWord();
+		    
+		    if(w == "\n")
+			advanceWord();
+		    
+		    if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 		    {
-			tokens.push_back(Token {w, "KEYWORD"});
-			context.push(ScopeFrame::Keyword);
-		    }
-		    //TODO: use speaker lookup table to verify
-		    else if(std::regex_match(w, regex_list["WORD"]))
-		    {
-			tokens.push_back(Token {w, "IDENT_SPEAKER"});
-			context.push(ScopeFrame::Speaker);
-		    }
-		    else if(w == "}")
-		    {
-			tokens.push_back(Token {w, "PUNC_CLOSE"});
-			context.pop();
-		    }
-		    else if(w == "\n")
-		    {
+			tokens.push_back(Token {w, "PUNC_OPEN"});
+			context.push(ScopeFrame::Section);
 		    }
 		    else
 		    {
-			throw std::runtime_error("[Lexer] Invalid word in Section or Setup: " + w);
+			throw std::runtime_error("[Lexer] No { after section label");
 		    }
 		}
-		else if(context.top() == ScopeFrame::Keyword)
+		else if(w == "\n")
 		{
-		    if(std::regex_match(w, regex_list["WORD"]))
-		    {
-			tokens.push_back(Token {w, "ARGUMENT"});
-		    }
 		}
-
-		std::cout << "[DEBUG] Finished one loop!\n";
+		else
+		{
+		    throw std::runtime_error("[Lexer] Unexpected word in root: " + w);
+		}
+	    }
+	    else if(context.top() == ScopeFrame::Section ||
+		    context.top() == ScopeFrame::Setup)
+	    {
+		//check if word is keyword
+		if(std::regex_match(w, regex_list["KEYWORD"]))
+		{
+		    tokens.push_back(Token {w, "KEYWORD"});
+		    context.push(ScopeFrame::Keyword);
+		}
+		//TODO: use speaker lookup table to verify
+		else if(std::regex_match(w, regex_list["WORD"]))
+		{
+		    tokens.push_back(Token {w, "IDENT_SPEAKER"});
+		    context.push(ScopeFrame::Speaker);
+		}
+		else if(w == "}")
+		{
+		    tokens.push_back(Token {w, "PUNC_CLOSE"});
+		    context.pop();
+		}
+		else if(w == "\n")
+		{
+		}
+		else
+		{
+		    throw std::runtime_error("[Lexer] Invalid word in Section or Setup: " + w);
+		}
+	    }
+	    else if(context.top() == ScopeFrame::Keyword)
+	    {
+		if(std::regex_match(w, regex_list["WORD"]))
+		{
+		    tokens.push_back(Token {w, "ARGUMENT"});
+		}
+	    }
+	    
+	    std::cout << "[DEBUG] Finished one loop!\n";
 	}
 	return tokens;
     }
