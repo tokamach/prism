@@ -102,8 +102,9 @@ namespace Parlex
 	while(advanceWord())
 	{
 	    //if(w == "\n") {}
-	    if(context.top() == ScopeFrame::Root)
+	    switch(context.top())
 	    {
+	    case ScopeFrame::Root:
 		if(std::regex_match(w, regex_list["SETUP"]))
 		{
 		    tokens.push_back(Token {w, "SETUP"});
@@ -149,10 +150,10 @@ namespace Parlex
 		{
 		    throw std::runtime_error("[Lexer] Unexpected word in root: " + w);
 		}
-	    }
-	    else if(context.top() == ScopeFrame::Section ||
-		    context.top() == ScopeFrame::Setup)
-	    {
+		break;
+		
+	    case ScopeFrame::Section:
+	    case ScopeFrame::Setup:
 		//check if word is keyword
 		if(std::regex_match(w, regex_list["KEYWORD"]))
 		{
@@ -177,9 +178,9 @@ namespace Parlex
 		{
 		    throw std::runtime_error("[Lexer] Invalid word in Section or Setup: " + w);
 		}
-	    }
-	    else if(context.top() == ScopeFrame::Keyword)
-	    {
+		break;
+		
+	    case ScopeFrame::Keyword:
 		if(std::regex_match(w, regex_list["WORD"]))
 		{
 		    tokens.push_back(Token {w, "ARG"});
@@ -197,9 +198,9 @@ namespace Parlex
 		{
 		    context.pop();
 		}
-	    }
-	    else if(context.top() == ScopeFrame::Speaker)
-	    {
+		break;
+		
+	    case ScopeFrame::Speaker:
 		if(w != "\n")
 		{
 		    tokens.push_back(Token {w, "DIALOGUE_STRING"});
@@ -208,9 +209,9 @@ namespace Parlex
 		{
 		    context.pop();
 		}
-	    }
-	    else if(context.top() == ScopeFrame::Menu)
-	    {
+		break;
+		
+	    case ScopeFrame::Menu:
 		if(std::regex_match(w, regex_list["PUNC_CLOSE"]))
 		{
 		    tokens.push_back(Token {w, "PUNC_CLOSE_MENU"});
@@ -224,6 +225,7 @@ namespace Parlex
 		{
 		    tokens.push_back(Token {w, "DIALOGUE_STRING"});
 		}
+		break;
 	    }
 	}
 	return tokens;
