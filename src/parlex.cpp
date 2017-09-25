@@ -205,17 +205,16 @@ namespace Parlex
 		    tokens.push_back(Token {w, "PUNC_CLOSE_MENU"});
 		    advanceWord();
 		    if(w == "\n")
-		    {
 			advanceWord();
-			if(std::regex_match(w, regex_list["PUNC_OPEN"]))
-			{
-			    tokens.push_back(Token {w, "PUNC_OPEN_MENU"});
-			}
-			else
-			{
-			    context.pop();
-			    context.pop(); //twice to return from both menu and keyword frames
-			}
+		    
+		    if(std::regex_match(w, regex_list["PUNC_OPEN"]))
+		    {
+			tokens.push_back(Token {w, "PUNC_OPEN_MENU"});
+		    }
+		    else
+		    {
+			context.pop();
+			context.pop(); //twice to return from both menu and keyword frames
 		    }
 		}
 		else
