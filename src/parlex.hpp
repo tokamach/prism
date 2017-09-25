@@ -24,7 +24,8 @@ namespace Parlex
 	Setup,
 	Section,
 	Keyword,
-	Menu,
+	MenuA,
+	MenuB,
 	Speaker,
 	Root,
 	None
