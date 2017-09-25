@@ -1,5 +1,7 @@
 # -*- olivetti-body-width: 94; -*-
 * Visual Novel engine in c++
+* Random notes
+- Stringstream will just keep returning same thing on >> even if it's at the end, check if its done
 * Parsing
 ** Create lexer for script
 - Tokenize script into Vector or List of Tokens, containing metadata like line number as well
