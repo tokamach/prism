@@ -1,14 +1,9 @@
 # -*- olivetti-body-width: 94; -*-
 * Visual Novel engine in c++
-* Random notes
-- Stringstream will just keep returning same thing on >> even if it's at the end, check if its done
 * Parsing
-** Create lexer for script
-- Tokenize script into Vector or List of Tokens, containing metadata like line number as well
-- don't forget to keep track of scope (section/menu block)
-- create symbol table for use in internal tagging and to pass to parser
-- can't be only regex, and pure hand is a pain, you have to make it a hybrid
-** Create parser for lexed script
+** Lexer
+The lexer is rather smart in order to accurately tag all tokens without ambiguity, keeping track of Scope, Speakers, and vars.
+** Parser
 - Simple Finite State Automaton should be fine, as the script format currently does not allow nested labels and will not need to be a Pushdown Automaton or LL(1) parser.
 - Or go all out and do an RDP
 
@@ -83,11 +78,9 @@ main
 ** Script VM
 Prism can be viewed as an interpreter for the Prism Script language. It's only state is the global variables based on user decisions, and the current position in the script itself.
 
-The ScriptVM class performs the tasks that the prism main loop would do, but headless
-
 ** Main loop
-1. Iterate to next item in script
-2. Parse script command (show image, show text, show menu)
+1. Iterate to next node in script AST
+2. Parse command (show image, show text, show menu)
 3. (optional) Accept user input from menu
 4. Perform relevant action, whether logical or graphical
 
