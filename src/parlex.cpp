@@ -28,12 +28,9 @@ namespace Parlex
 	line_num = 0;
 	context.push(ScopeFrame::Root);
 	regex_list = {{"KEYWORD",      regex("speaker|var|set|bg|show|menu|jump|if|fin")},
-		      {"IDENT_COLOUR", regex("red|orange|yellow|green|blue|purple|pink")},
 		      {"PUNC_OPEN",    regex("[{\\[]")},
 		      {"PUNC_MID",     regex("\\|")},
 		      {"PUNC_CLOSE",   regex("[}\\]]")},
-		      {"STRING",       regex("(\\[|\\|)(\\w| )+(\\]|\\|)")},
-		      {"SETUP",        regex("setup")},
 		      {"IMG_PATH",     regex("[a-z\\/\\.]+")},
 		      {"WORD",         regex("[A-Za-z]+")}};
 	advanceLine(); //just to get started
@@ -87,11 +84,10 @@ namespace Parlex
     {
 	while(advanceWord())
 	{
-	    //if(w == "\n") {}
 	    switch(context.top())
 	    {
 	    case ScopeFrame::Root:
-		if(std::regex_match(w, regex_list["SETUP"]))
+		if(w == "setup")
 		{
 		    tokens.push_back(Token {w, "SETUP"});
 		    advanceWord();
@@ -232,7 +228,7 @@ namespace Parlex
     
     Parser::Parser(vector<Token> tokVec)
     {
-	
+
     }
     
     AST* Parser::parse()
