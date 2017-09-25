@@ -102,8 +102,8 @@ namespace Parlex
 	while(advanceWord())
 	{
 	    std::cout << "[DEBUG] w in loop: " << w << std::endl;
-	    if(w == "\n") {}
-	    else if(context.top() == ScopeFrame::Root)
+	    //if(w == "\n") {}
+	    if(context.top() == ScopeFrame::Root)
 	    {
 		if(std::regex_match(w, regex_list["SETUP"]))
 		{
@@ -187,6 +187,10 @@ namespace Parlex
 		if(std::regex_match(w, regex_list["WORD"]))
 		{
 		    tokens.push_back(Token {w, "ARGUMENT"});
+		}
+		else if(w == "\n")
+		{
+		    context.pop();
 		}
 	    }
 	    
