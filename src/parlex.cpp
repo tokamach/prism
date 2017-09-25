@@ -35,7 +35,7 @@ namespace Parlex
 		      {"SETUP",        regex("setup")},
 		      {"WORD",         regex("[a-z]+")}};
 	advanceLine(); //just to get started
-	advanceWord();
+	//advanceWord();
     }
 
     void Lexer::back()
@@ -58,6 +58,7 @@ namespace Parlex
 	if(std::getline(*file, cur))
 	{
 	    line_num++;
+	    std::cout << "[DEBUG] advline val:" << cur << "\n";
 	    cur_line_ss = std::stringstream(cur);
 	    return true;
 	} else {
@@ -68,17 +69,20 @@ namespace Parlex
     //move ahead one word, line if necessary
     bool Lexer::advanceWord()
     {
-	if(!cur_line_ss)
+	std::cout << "[DEBUG] Advanced a word!\n";
+	if(!cur_line_ss.eof())
 	{
 	    if(w == "\n")
 	    {
-		if(!advanceLine())
+		if(advanceLine())
+		{
+		    cur_line_ss >> w;
+		    return true;
+		}
+		else
 		{
 		    //file done
 		    return false;
-		} else {
-		    cur_line_ss >> w;
-		    return true;
 		}
 	    }
 	    else
@@ -96,18 +100,25 @@ namespace Parlex
     {
 	while(advanceWord())
 	{
-		if(context.top() == ScopeFrame::Root)
+	    std::cout << "[DEBUG] w in loop: " << w << std::endl;
+	    if(w == "\n") {}
+	    else if(context.top() == ScopeFrame::Root)
 		{
 		    if(std::regex_match(w, regex_list["SETUP"]))
 		    {
+			std::cout << "[DEBUG] Matched Setup!\n";
 			tokens.push_back(Token {w, "SETUP"});
 			advanceWord();
 
 			if(w == "\n")
+			{
+			    std::cout << "[DEBUG] Matched newl!\n";
 			    advanceWord();
+			}
 
 			if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 			{
+			    std::cout << "[DEBUG] Matched punco!\n";
 			    tokens.push_back(Token {w, "PUNC_OPEN"});
 			    context.push(ScopeFrame::Setup);
 			}
@@ -177,6 +188,8 @@ namespace Parlex
 			tokens.push_back(Token {w, "ARGUMENT"});
 		    }
 		}
+
+		std::cout << "[DEBUG] Finished one loop!\n";
 	}
 	return tokens;
     }
