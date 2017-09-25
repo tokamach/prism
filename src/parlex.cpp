@@ -33,6 +33,7 @@ namespace Parlex
 		      {"PUNC_CLOSE",   regex("[}\\]]")},
 		      {"STRING",       regex("(\\[|\\|)(\\w| )+(\\]|\\|)")},
 		      {"SETUP",        regex("setup")},
+		      {"IMG_PATH",     regex("[a-z\\/\\.]+")},
 		      {"WORD",         regex("[a-z]+")}};
 	advanceLine(); //just to get started
 	//advanceWord();
@@ -180,9 +181,24 @@ namespace Parlex
 	    {
 		if(std::regex_match(w, regex_list["WORD"]))
 		{
-		    tokens.push_back(Token {w, "ARGUMENT"});
+		    tokens.push_back(Token {w, "ARG"});
+		}
+		else if(std::regex_match(w, regex_list["IMG_PATH"]))
+		{
+		    tokens.push_back(Token {w, "ARG_IMG"});
 		}
 		else if(w == "\n")
+		{
+		    context.pop();
+		}
+	    }
+	    else if(context.top() == ScopeFrame::Speaker)
+	    {
+		if(w != "\n")
+		{
+		    tokens.push_back(Token {w, "DIALOGUE_STRING"});
+		}
+		else
 		{
 		    context.pop();
 		}
