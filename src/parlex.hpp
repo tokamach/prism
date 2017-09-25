@@ -10,13 +10,6 @@
 
 #include "ast.hpp"
 
-using std::string;
-using std::ifstream;
-using std::vector;
-using std::regex;
-using std::stack;
-using std::map;
-
 namespace Parlex
 {
     enum class ScopeFrame
@@ -33,34 +26,34 @@ namespace Parlex
 
     struct Token
     {
-	string val;
-	string cat;
+	std::string val;
+	std::string cat;
     };
     
     class Lexer
     {
     public:
-	Lexer(ifstream* _file);
-	vector<Token> lex();
+	Lexer(std::ifstream* _file);
+	std::vector<Token> lex();
 	int line_num;
 
     private:
 	bool advanceLine();
 	bool advanceWord();
 
-	ifstream* file;
+	std::ifstream* file;
 	std::stringstream cur_line_ss;
-	string w;
+	std::string w;
 
-	vector<Token> tokens;
-	map<string, regex> regex_list;
-	stack<ScopeFrame> context;
+	std::vector<Token> tokens;
+	std::map<std::string, std::regex> regex_list;
+	std::stack<ScopeFrame> context;
     };
     
     class Parser
     {
     public:
-	Parser(vector<Token> tokVec);
+	Parser(std::vector<Token> tokVec);
 	AST* parse();
 
     private:
