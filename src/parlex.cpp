@@ -70,7 +70,7 @@ namespace Parlex
     bool Lexer::advanceWord()
     {
 	std::cout << "[DEBUG] Advanced a word!\n";
-	if(!cur_line_ss.eof())
+	if(cur_line_ss.eof())
 	{
 	    if(w == "\n")
 	    {
