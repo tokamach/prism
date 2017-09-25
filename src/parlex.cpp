@@ -58,7 +58,6 @@ namespace Parlex
 	if(std::getline(*file, cur))
 	{
 	    line_num++;
-	    std::cout << "[DEBUG] advline val:" << cur << "\n";
 	    cur_line_ss = std::stringstream(cur);
 	    return true;
 	} else {
@@ -69,7 +68,6 @@ namespace Parlex
     //move ahead one word, line if necessary
     bool Lexer::advanceWord()
     {
-	std::cout << "[DEBUG] Advanced a word!\n";
 	if(cur_line_ss.eof())
 	{
 	    if(w == "\n")
@@ -101,25 +99,21 @@ namespace Parlex
     {
 	while(advanceWord())
 	{
-	    std::cout << "[DEBUG] w in loop: " << w << std::endl;
 	    //if(w == "\n") {}
 	    if(context.top() == ScopeFrame::Root)
 	    {
 		if(std::regex_match(w, regex_list["SETUP"]))
 		{
-		    std::cout << "[DEBUG] Matched Setup!\n";
 		    tokens.push_back(Token {w, "SETUP"});
 		    advanceWord();
 		    
 		    if(w == "\n")
 		    {
-			std::cout << "[DEBUG] Matched newl!\n";
 			advanceWord();
 		    }
 		    
 		    if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 		    {
-			std::cout << "[DEBUG] Matched punco!\n";
 			tokens.push_back(Token {w, "PUNC_OPEN"});
 			context.push(ScopeFrame::Setup);
 		    }
@@ -193,8 +187,6 @@ namespace Parlex
 		    context.pop();
 		}
 	    }
-	    
-	    std::cout << "[DEBUG] Finished one loop!\n";
 	}
 	return tokens;
     }
