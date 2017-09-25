@@ -88,6 +88,7 @@ namespace Parlex
 	    else
 	    {
 		w = "\n";
+		return true;
 	    }
 	} else {
 	    cur_line_ss >> w;
