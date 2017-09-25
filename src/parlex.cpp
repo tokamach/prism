@@ -100,6 +100,10 @@ namespace Parlex
 		    {
 			tokens.push_back(Token {w, "SETUP"});
 			advanceWord();
+
+			if(w == "\n")
+			    advanceWord();
+
 			if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 			{
 			    tokens.push_back(Token {w, "PUNC_OPEN"});
@@ -114,6 +118,10 @@ namespace Parlex
 		    {
 			tokens.push_back(Token {w, "IDENT"});
 			advanceWord();
+
+			if(w == "\n")
+			    advanceWord();
+
 			if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 			{
 			    tokens.push_back(Token {w, "PUNC_OPEN"});
@@ -130,7 +138,7 @@ namespace Parlex
 		    }
 		    else
 		    {
-			throw std::runtime_error("[Lexer] Unexpected word in root");
+			throw std::runtime_error("[Lexer] Unexpected word in root: " + w);
 		    }
 		}
 		else if(context.top() == ScopeFrame::Section ||
@@ -147,6 +155,14 @@ namespace Parlex
 		    {
 			tokens.push_back(Token {w, "IDENT_SPEAKER"});
 			context.push(ScopeFrame::Speaker);
+		    }
+		    else if(w == "\n")
+		    {
+			
+		    }
+		    else
+		    {
+			throw std::runtime_error("[Lexer] Invalid word in Section or Setup: " + w);
 		    }
 		}
 		else if(context.top() == ScopeFrame::Keyword)
