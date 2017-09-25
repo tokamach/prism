@@ -31,7 +31,7 @@ namespace Parlex
 		      {"PUNC_OPEN",    regex("[{\\[]")},
 		      {"PUNC_MID",     regex("\\|")},
 		      {"PUNC_CLOSE",   regex("[}\\]]")},
-		      {"IMG_PATH",     regex("[a-z\\/\\.]+")},
+		      {"IMG_PATH",     regex("[a-z\\/]+")},
 		      {"WORD",         regex("[A-Za-z]+")}};
 	advanceLine(); //just to get started
     }
@@ -174,7 +174,7 @@ namespace Parlex
 		else if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 		{
 		    tokens.push_back(Token {w, "PUNC_OPEN_MENU"});
-		    context.push(ScopeFrame::MenuA);
+		    context.push(ScopeFrame::Menu);
 		}
 		else if(w == "\n")
 		{
@@ -193,33 +193,36 @@ namespace Parlex
 		}
 		break;
 		
-	    case ScopeFrame::MenuA:
+	    case ScopeFrame::Menu:
 		if(w == "|")
 		{
 		    tokens.push_back(Token {w, "PUNC_MID_MENU"});
-		    context.push(ScopeFrame::MenuB);
+		    advanceWord();
+		    tokens.push_back(Token {w, "IDENT_SECTION"});
 		}
-		else if(std::regex_match(w, regex_list["PUNC_OPEN"]))
+		else if(std::regex_match(w, regex_list["PUNC_CLOSE"]))
 		{
-		    tokens.push_back(Token {w, "PUNC_OPEN_MENU"});
+		    tokens.push_back(Token {w, "PUNC_CLOSE_MENU"});
+		    advanceWord();
+		    if(w == "\n")
+		    {
+			advanceWord();
+			if(std::regex_match(w, regex_list["PUNC_OPEN"]))
+			{
+			    tokens.push_back(Token {w, "PUNC_OPEN_MENU"});
+			}
+			else
+			{
+			    context.pop();
+			    context.pop(); //twice to return from both menu and keyword frames
+			}
+		    }
 		}
-		else if(w == "\n") {}
 		else
 		{
 		    tokens.push_back(Token {w, "DIALOGUE_STRING"});
 		}
-		break;
 
-	    case ScopeFrame::MenuB:
-		if(std::regex_match(w, regex_list["PUNC_CLOSE"]))
-		{
-		    tokens.push_back(Token {w, "PUNC_CLOSE_MENU"});
-		    context.pop();
-		}
-		else
-		{
-		    tokens.push_back(Token {w, "IDENT_SECTION"});
-		}
 		break;
 	    }
 	}
