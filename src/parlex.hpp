@@ -47,8 +47,6 @@ namespace Parlex
     private:
 	bool advanceLine();
 	bool advanceWord();
-	void back();
-	void back(int n);
 
 	ifstream* file;
 	std::stringstream cur_line_ss;
@@ -62,14 +60,11 @@ namespace Parlex
     class Parser
     {
     public:
-	//Finite State Machine variables
-	bool inSetup;
-	bool inLabel;
-	std::string labelName;
-	
 	Parser(vector<Token> tokVec);
-	
 	AST* parse();
+
+    private:
+	
     };
     
 }

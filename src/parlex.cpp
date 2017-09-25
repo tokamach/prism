@@ -39,19 +39,6 @@ namespace Parlex
 	advanceLine(); //just to get started
     }
 
-    void Lexer::back()
-    {
-	file->unget();
-    }
-
-    void Lexer::back(int n)
-    {
-	for(int i = 0; i < n; i++)
-	{
-	    file->unget();
-	}
-    }
-
     bool Lexer::advanceLine()
     {
 	//try read next line, if returns false we done
