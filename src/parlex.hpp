@@ -41,6 +41,7 @@ namespace Parlex
     public:
 	Lexer(ifstream* _file);
 	vector<Token> lex();
+	int line_num;
 
     private:
 	bool advanceLine();

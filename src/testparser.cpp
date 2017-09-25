@@ -18,7 +18,9 @@ int main()
     }
     catch(std::runtime_error ex)
     {
-	std::cout << "[ERROR]" << ex.what() << std::endl;
+	std::cout << "[ERROR]" << ex.what()
+		  << " on line: " << l.line_num
+		  << std::endl;
 	return 1;
     }
 

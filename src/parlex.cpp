@@ -25,6 +25,7 @@ namespace Parlex
     Lexer::Lexer(ifstream* _file)
     {
 	file = _file;
+	line_num = 0;
 	context.push(ScopeFrame::Root);
 	regex_list = {{"KEYWORD",      regex("speaker|var|set|bg|show|menu|jump|if|fin")},
 		      {"IDENT_COLOUR", regex("red|orange|yellow|green|blue|purple|pink")},
@@ -56,6 +57,7 @@ namespace Parlex
 	string cur;
 	if(std::getline(*file, cur))
 	{
+	    line_num++;
 	    cur_line_ss = std::stringstream(cur);
 	    return true;
 	} else {
@@ -134,7 +136,6 @@ namespace Parlex
 		    }
 		    else if(w == "\n")
 		    {
-			
 		    }
 		    else
 		    {
@@ -156,9 +157,13 @@ namespace Parlex
 			tokens.push_back(Token {w, "IDENT_SPEAKER"});
 			context.push(ScopeFrame::Speaker);
 		    }
+		    else if(w == "}")
+		    {
+			tokens.push_back(Token {w, "PUNC_CLOSE"});
+			context.pop();
+		    }
 		    else if(w == "\n")
 		    {
-			
 		    }
 		    else
 		    {
