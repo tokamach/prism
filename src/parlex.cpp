@@ -9,6 +9,7 @@
 #include <iostream>
 #include <stack>
 #include <map>
+#include <iterator>
 
 #include "ast.hpp"
 
@@ -89,7 +90,7 @@ namespace Parlex
 	    case ScopeFrame::Root:
 		if(w == "setup")
 		{
-		    tokens.push_back(Token {w, "SETUP"});
+		    tokens.push_back(Token {w, TokenType::Setup});
 		    advanceWord();
 		    
 		    if(w == "\n")
@@ -99,7 +100,7 @@ namespace Parlex
 		    
 		    if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 		    {
-			tokens.push_back(Token {w, "PUNC_OPEN"});
+			tokens.push_back(Token {w, TokenType::Punc_Open});
 			context.push(ScopeFrame::Setup);
 		    }
 		    else
@@ -109,7 +110,7 @@ namespace Parlex
 		}
 		else if(std::regex_match(w, regex_list["WORD"]))
 		{
-		    tokens.push_back(Token {w, "IDENT_SECTION"});
+		    tokens.push_back(Token {w, TokenType::Ident_Section});
 		    advanceWord();
 		    
 		    if(w == "\n")
@@ -117,7 +118,7 @@ namespace Parlex
 		    
 		    if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 		    {
-			tokens.push_back(Token {w, "PUNC_OPEN"});
+			tokens.push_back(Token {w, TokenType::Punc_Open});
 			context.push(ScopeFrame::Section);
 		    }
 		    else
@@ -139,18 +140,18 @@ namespace Parlex
 		//check if word is keyword
 		if(std::regex_match(w, regex_list["KEYWORD"]))
 		{
-		    tokens.push_back(Token {w, "KEYWORD"});
+		    tokens.push_back(Token {w, TokenType::Keyword});
 		    context.push(ScopeFrame::Keyword);
 		}
 		//TODO: use speaker lookup table to verify
 		else if(std::regex_match(w, regex_list["WORD"]))
 		{
-		    tokens.push_back(Token {w, "IDENT_SPEAKER"});
+		    tokens.push_back(Token {w, TokenType::Ident_Speaker});
 		    context.push(ScopeFrame::Speaker);
 		}
 		else if(w == "}")
 		{
-		    tokens.push_back(Token {w, "PUNC_CLOSE"});
+		    tokens.push_back(Token {w, TokenType::Punc_Close});
 		    context.pop();
 		}
 		else if(w == "\n")
@@ -165,15 +166,15 @@ namespace Parlex
 	    case ScopeFrame::Keyword:
 		if(std::regex_match(w, regex_list["WORD"]))
 		{
-		    tokens.push_back(Token {w, "ARG"});
+		    tokens.push_back(Token {w, TokenType::Arg});
 		}
 		else if(std::regex_match(w, regex_list["IMG_PATH"]))
 		{
-		    tokens.push_back(Token {w, "ARG_IMG"});
+		    tokens.push_back(Token {w, TokenType::Arg_Image});
 		}
 		else if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 		{
-		    tokens.push_back(Token {w, "PUNC_OPEN_MENU"});
+		    tokens.push_back(Token {w, TokenType::Punc_Open_Menu});
 		    context.push(ScopeFrame::Menu);
 		}
 		else if(w == "\n")
@@ -185,7 +186,7 @@ namespace Parlex
 	    case ScopeFrame::Speaker:
 		if(w != "\n")
 		{
-		    tokens.push_back(Token {w, "DIALOGUE_STRING"});
+		    tokens.push_back(Token {w, TokenType::Dialouge_String});
 		}
 		else
 		{
@@ -196,20 +197,20 @@ namespace Parlex
 	    case ScopeFrame::Menu:
 		if(w == "|")
 		{
-		    tokens.push_back(Token {w, "PUNC_MID_MENU"});
+		    tokens.push_back(Token {w, TokenType::Punc_Mid_Menu});
 		    advanceWord();
-		    tokens.push_back(Token {w, "IDENT_SECTION"});
+		    tokens.push_back(Token {w, TokenType::Ident_Section});
 		}
 		else if(std::regex_match(w, regex_list["PUNC_CLOSE"]))
 		{
-		    tokens.push_back(Token {w, "PUNC_CLOSE_MENU"});
+		    tokens.push_back(Token {w, TokenType::Punc_Close_Menu});
 		    advanceWord();
 		    if(w == "\n")
 			advanceWord();
 		    
 		    if(std::regex_match(w, regex_list["PUNC_OPEN"]))
 		    {
-			tokens.push_back(Token {w, "PUNC_OPEN_MENU"});
+			tokens.push_back(Token {w, TokenType::Punc_Open_Menu});
 		    }
 		    else
 		    {
@@ -219,7 +220,7 @@ namespace Parlex
 		}
 		else
 		{
-		    tokens.push_back(Token {w, "DIALOGUE_STRING"});
+		    tokens.push_back(Token {w, TokenType::Dialouge_String});
 		}
 
 		break;
@@ -230,12 +231,33 @@ namespace Parlex
     
     Parser::Parser(vector<Token> tokVec)
     {
-
+	this->tokens = tokVec;
     }
     
     AST* Parser::parse()
     {
 	AST *tree = new AST();
+
+	auto t = tokens.begin();
+
+	if(*t.cat == TokenType::Setup)
+	{
+	    tree->setupBlock = new NodeSetup {};
+	    t++;
+	    if(*t.cat == TokenType::Punc_Open)
+	    {
+		t++;
+		if(*t.cat == TokenType::Keyword)
+		{
+		    switch(*t.val)
+		    {
+			
+		    }
+		    //tree->setupBlock.block.push_back()
+		}
+	    }
+	}
+	else throw std::runtime_error("[Parser] tokl did not start in setup block");
 
 	return tree;
     }

@@ -24,8 +24,8 @@ int main()
 	return 1;
     }
 
-    for(auto e : v)
+    for(auto t : v)
     {
-	std::cout << e.val << " : " << e.cat << std::endl;
+	std::cout << t.val << std::endl;
     }
 }

@@ -23,10 +23,32 @@ namespace Parlex
 	None
     };
 
+    enum class TokenType
+    {
+	Setup,
+	Ident_Section,
+
+	Keyword,
+	Ident_Speaker,
+	Arg,
+	Arg_Image,
+	Dialouge_String,
+	Img_Path,
+	Word,
+
+	Punc_Open,
+	Punc_Mid,
+	Punc_Close,
+
+	Punc_Open_Menu,
+	Punc_Mid_Menu,
+	Punc_Close_Menu
+    };
+
     struct Token
     {
 	std::string val;
-	std::string cat;
+	TokenType cat;
     };
     
     class Lexer
@@ -56,7 +78,7 @@ namespace Parlex
 	AST* parse();
 
     private:
-	
+	std::vector<Token> tokens;
     };
     
 }
