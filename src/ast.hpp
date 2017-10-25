@@ -14,24 +14,48 @@ struct Node
 //  Node() { };
 };
 
+// Root level nodes
 struct NodeSetup : public Node
 {
     list<Node> block;
 };
 
-struct NodeLabel : public Node
+struct NodeSection : public Node
 {
     string label;
     list<Node> block;
 };
 
-struct NodeSpeaker : public Node
+// Keyword nodes
+struct NodeSpeakerSetup : public Node
 {
+    string alias;
     string name;
-    list<Node> block;
+    string color;
 };
 
-struct NodeString : public Node
+struct NodeSpeaker : public Node
+{
+    string value;
+};
+
+struct NodeBg : public Node
+{
+    string value;
+};
+
+struct NodeShow : public Node
+{
+    string value;
+};
+
+struct NodeFin : public Node
+{
+//    NodeFin() { }
+};
+
+// Logic nodes
+struct NodeJump : public Node
 {
     string value;
 };
@@ -48,25 +72,11 @@ struct NodeSet : public Node
     string value;
 };
 
-struct NodeBg : public Node
-{
-    string value;
-};
-
-struct NodeShow : public Node
-{
-    string value;
-};
-
+//TODO: sort this proper
 struct NodeMenu : public Node
 {
     string value;
     list<Node> block;
-};
-
-struct NodeJump : public Node
-{
-    string value;
 };
 
 struct NodeIf : public Node
@@ -74,11 +84,6 @@ struct NodeIf : public Node
     string var1;
     string var2;
     string conditional;
-};
-
-struct NodeFin : public Node
-{
-    NodeFin() { }
 };
 
 struct NodeNone : public Node
@@ -90,7 +95,7 @@ class AST
 {
 public:
     NodeSetup setupBlock;
-    list<NodeLabel> labels;
+    list<NodeSection> sections;
 
     AST() { }
 };
