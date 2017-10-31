@@ -243,7 +243,7 @@ namespace Parlex
 
     void Parser::parseSetup()
     {
-	tree->setupBlock = NodeSetup {};
+	tree->setup = Node{NodeType::Setup, {}, {}};
 	t++;
 	if(t->cat == TokenType::Punc_Open)
 	{
@@ -262,9 +262,10 @@ namespace Parlex
 			string n = t->val;
 			t++;
 			string c = t->val;
-			tree->setupBlock.block.push_back(new NodeSpeakerSetup {a, n, c});
-			tree->setupBlock.block.push_back(new NodeSpeaker {"aga"});
-
+			tree->setup.block.push_back(Node {NodeType::SpeakerSetup, {},
+				{{"alias", a},
+				 {"name" , n},
+				 {"color", c}}});
 			t++;
 		    }
 		    else if (t->val == "var")
@@ -272,7 +273,7 @@ namespace Parlex
 			//TODO: parse for optional inital value
 			t++;
 			string name = t->val;
-			tree->setupBlock.block.push_back(NodeVar {name, ""});
+			tree->setup.block.push_back(Node {NodeType::Var, {}, {{"name", name}}});
 
 			t++;
 		    }

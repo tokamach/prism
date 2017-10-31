@@ -3,17 +3,33 @@
 #include <string>
 #include <list>
 
-using std::string;
-using std::list;
-
 //TODO: macroize this whole step
+
+enum class NodeType
+{
+    Setup,
+    Section,
+    Speaker,
+    SpeakerSetup,
+    Bg,
+    Show,
+    Fin,
+    Jump,
+    Var,
+    Set,
+    Menu,
+    If,
+    None
+};
 
 struct Node
 {
-//  Node next;
-  virtual ~Node() { };
+    NodeType type;
+    std::list<Node> block;
+    std::map<std::string, std::string> args;
 };
 
+/*
 // Root level nodes
 struct NodeSetup : public Node
 {
@@ -90,12 +106,12 @@ struct NodeNone : public Node
 {
     NodeNone() { }
 };
-
+*/
 class AST 
 {
 public:
-    NodeSetup setupBlock;
-    list<NodeSection> sections;
+    Node setup;
+    std::list<Node> sections;
 
     AST() { }
 };
