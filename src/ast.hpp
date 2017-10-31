@@ -11,13 +11,13 @@ using std::list;
 struct Node
 {
 //  Node next;
-//  Node() { };
+  virtual ~Node() { };
 };
 
 // Root level nodes
 struct NodeSetup : public Node
 {
-    list<Node> block;
+    list<Node*> block;
 };
 
 struct NodeSection : public Node
@@ -27,7 +27,7 @@ struct NodeSection : public Node
 };
 
 // Keyword nodes
-struct NodeSpeakerSetup : public Node
+struct NodeSpeakerSetup : Node
 {
     string alias;
     string name;

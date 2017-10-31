@@ -32,7 +32,7 @@ namespace Parlex
 	Ident_Speaker,
 	Arg,
 	Arg_Image,
-	Dialouge_String,
+	Dialogue_String,
 	Img_Path,
 	Word,
 
@@ -78,7 +78,12 @@ namespace Parlex
 	AST* parse();
 
     private:
+	void parseSetup();
+	void parseSection();
+
 	std::vector<Token> tokens;
+	std::vector<Token>::iterator t;
+	AST *tree;
     };
     
 }

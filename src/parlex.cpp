@@ -186,7 +186,7 @@ namespace Parlex
 	    case ScopeFrame::Speaker:
 		if(w != "\n")
 		{
-		    tokens.push_back(Token {w, TokenType::Dialouge_String});
+		    tokens.push_back(Token {w, TokenType::Dialogue_String});
 		}
 		else
 		{
@@ -220,7 +220,7 @@ namespace Parlex
 		}
 		else
 		{
-		    tokens.push_back(Token {w, TokenType::Dialouge_String});
+		    tokens.push_back(Token {w, TokenType::Dialogue_String});
 		}
 
 		break;
@@ -232,30 +232,69 @@ namespace Parlex
     Parser::Parser(vector<Token> tokVec)
     {
 	this->tokens = tokVec;
+	t = tokens.begin();
+	tree = new AST();
+    }
+
+    void Parser::parseSection()
+    {
+	
+    }
+
+    void Parser::parseSetup()
+    {
+	tree->setupBlock = NodeSetup {};
+	t++;
+	if(t->cat == TokenType::Punc_Open)
+	{
+	    //TODO: loop this section
+	    t++;
+	    do
+	    {
+		if(t->cat == TokenType::Keyword)
+		{
+		    //only check for speaker and var since we in setup
+		    if(t->val == "speaker")
+		    {
+			t++;
+			string a = t->val;
+			t++;
+			string n = t->val;
+			t++;
+			string c = t->val;
+			tree->setupBlock.block.push_back(new NodeSpeakerSetup {a, n, c});
+			tree->setupBlock.block.push_back(new NodeSpeaker {"aga"});
+
+			t++;
+		    }
+		    else if (t->val == "var")
+		    {
+			//TODO: parse for optional inital value
+			t++;
+			string name = t->val;
+			tree->setupBlock.block.push_back(NodeVar {name, ""});
+
+			t++;
+		    }
+		}
+		else
+		    throw std::runtime_error("[Parser] unexpected non-keyword in setup block");
+	    } while (t->cat != TokenType::Punc_Close);
+
+	    t++;
+	}
     }
     
     AST* Parser::parse()
     {
-	AST *tree = new AST();
-
-	auto t = tokens.begin();
-
-	if(*t.cat == TokenType::Setup)
+	if(t->cat == TokenType::Setup)
 	{
-	    tree->setupBlock = new NodeSetup {};
-	    t++;
-	    if(*t.cat == TokenType::Punc_Open)
+	    parseSetup();
+	    if(t->cat == TokenType::Ident_Section)
 	    {
-		t++;
-		if(*t.cat == TokenType::Keyword)
-		{
-		    switch(*t.val)
-		    {
-			
-		    }
-		    //tree->setupBlock.block.push_back()
-		}
+		parseSection();
 	    }
+	    else throw std::runtime_error("[Parser] non label after setup block");
 	}
 	else throw std::runtime_error("[Parser] tokl did not start in setup block");
 

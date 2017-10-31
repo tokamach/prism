@@ -7,6 +7,9 @@ The lexer is rather smart in order to accurately tag all tokens without ambiguit
 - Simple Finite State Automaton should be fine, as the script format currently does not allow nested labels and will not need to be a Pushdown Automaton or LL(1) parser.
 - Or go all out and do an RDP
 
+- future note for yourself
+  rather than using an explicit stack to store program state like in the lexer you've decided to use recursive fnuctions, as in a recursive descent parser. ideally the stack should more than accomodate for this, but I guess change it if it doesn't work
+
 * Script
 - script begins with a setup block, where speakers are defined
 - followed by individually labeled sections
