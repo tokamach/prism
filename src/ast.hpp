@@ -29,6 +29,15 @@ struct Node
     std::map<std::string, std::string> args;
 };
 
+class AST 
+{
+public:
+    Node setup;
+    std::list<Node> sections;
+
+    AST() { }
+};
+
 /*
 // Root level nodes
 struct NodeSetup : public Node
@@ -107,11 +116,3 @@ struct NodeNone : public Node
     NodeNone() { }
 };
 */
-class AST 
-{
-public:
-    Node setup;
-    std::list<Node> sections;
-
-    AST() { }
-};
