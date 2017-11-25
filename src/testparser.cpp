@@ -27,6 +27,32 @@ std::map<Parlex::TokenType, std::string> m =
     {Parlex::TokenType::Word, "Word"}
 };
 
+std::map<NodeType, std::string> nodeNameMap =
+{
+    {NodeType::Setup, "Setup"},
+    {NodeType::Section, "Section"},
+    {NodeType::Speaker, "Speaker"},
+    {NodeType::SpeakerSetup, "SpeakerSetup"},
+    {NodeType::Bg, "Bg"},
+    {NodeType::Show, "Show"},
+    {NodeType::Fin, "Fin"},
+    {NodeType::Jump, "Jump"},
+    {NodeType::Var, "Var"},
+    {NodeType::Set, "Set"},
+    {NodeType::Menu, "Menu"},
+    {NodeType::If, "If"},
+    {NodeType::None, "None"}
+};
+
+void printTree(AST *ast, int indent = 0)
+{
+
+    for (auto node : ast->sections)
+    {
+	
+    }
+}
+
 int main()
 {
     ifstream *f = new ifstream("test.txt");
@@ -52,11 +78,22 @@ int main()
 	std::cout << t.val << " : " << m[t.cat] << std::endl;
     }
 
+
     Parlex::Parser p(v);
     AST* ast;
     ast = p.parse();
 
     std::cout << std::endl << "Parser output:" << std::endl;
 
-    //TODO: walk ast and pretty print
+    //print setup block real quick
+    for (auto node : ast->setup.block)
+    {
+	std::cout << "Node type: " << nodeNameMap[node.type] << "\n";
+	for (const auto &arg : node.args)
+	    std::cout << " - " << arg.first << " : " << arg.second << "\n";
+	std::cout << "\n";
+    }
+
+    //print full tree
+    printTree(ast);
 }
