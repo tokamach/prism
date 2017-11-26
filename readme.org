@@ -1,7 +1,6 @@
 # -*- olivetti-body-width: 94; -*-
 * Visual Novel engine in c++
 * MAJOR TODOS
-- fix menu parse, it currently drops early and doesn't eat what it should
 - implement if in parse and lex
 - properly parse menu with multiple options using node block, lex is done
 - remove redundant None node type

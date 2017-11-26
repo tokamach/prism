@@ -46,17 +46,18 @@ std::map<NodeType, std::string> nodeNameMap =
 
 void printNode(Node node, int indent = 0)
 {
+    std::cout << std::string(indent, '-') << "Node : " << nodeNameMap[node.type] << "\n";
     for(auto arg : node.args)
     {
 	// add indent based on current tree depth
-	std::cout << std::string(indent, ' ') << arg.first << " : " << arg.second << "\n";
+	std::cout << std::string(indent+1, '-') << arg.first << " : " << arg.second << "\n";
     }
 
     //if we have children print them
     if(!node.block.empty())
     {
 	for(auto child : node.block)
-	    printNode(child, indent + 1);
+	    printNode(child, indent + 2);
     }
 }
 
@@ -112,5 +113,6 @@ int main()
     {
 	//recur print child nodes of section
 	printNode(section);
+	std::cout << "\n";
     }
 }
