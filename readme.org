@@ -2,8 +2,6 @@
 * Visual Novel engine in c++
 * MAJOR TODOS
 - implement if in parse and lex
-- properly parse menu with multiple options using node block, lex is done
-- remove redundant None node type
 
 * Parsing
 ** Lexer

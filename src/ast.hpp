@@ -19,7 +19,7 @@ enum class NodeType
     Set,
     Menu,
     If,
-    None
+    Data
 };
 
 struct Node

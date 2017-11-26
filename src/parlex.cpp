@@ -319,45 +319,35 @@ namespace Parlex
 			//TODO: let menu have more than two options in parse
 
 			t++; //eat keyword
-			t++; //eat punc_open_menu
 
-			// fill first menuText arg
-			string menuTextA;
-			while(t->cat == TokenType::Dialogue_String)
+			Node temp {NodeType::Menu, {}, {}};
+
+			while(t->cat == TokenType::Punc_Open_Menu)
 			{
-			    //TODO: don't just randomly space pad end, do it smart
-			    menuTextA += t->val + " ";
 			    t++;
-			}
 
-			t++; //eat punc_mid_menu
-			string menuLabelA = t->val; // set jump label A
-			t++;
+			    // fill menuText arg
+			    string optionText;
+			    while(t->cat == TokenType::Dialogue_String)
+			    {
+				//TODO: don't just randomly space pad end, do it smart
+				optionText += t->val + " ";
+				t++;
+			    }
+			    
+			    t++; //eat punc_mid_menu
+			    string optionLabel = t->val; // set jump label
 
-			t++;
-			t++; //eat punc close and open
-
-			// fill second menuText arg
-			string menuTextB;
-			while(t->cat == TokenType::Dialogue_String)
-			{
-			    //TODO: don't just randomly space pad end, do it smart
-			    menuTextB += t->val + " ";
 			    t++;
-			}
+			    t++; //eat jump label and punc_end
 
-			t++; //eat punc_mid_menu
-			string menuLabelB = t->val; // set jump label A
+			    temp.block.push_back(Node{NodeType::Data, {},
+					{{"text", optionText},
+					 {"label", optionLabel}}});
+			}
 
 			// temp use args instead of node block
-			tree->sections.back().block.push_back(Node{NodeType::Menu, {},
-				   {{"label_a", menuLabelA},
-				    {"text_a", menuTextA},
-				    {"label_b", menuLabelB},
-				    {"text_b", menuTextB}}});
-
-			t++;
-			t++; // eat jump label and PUNC_END
+			tree->sections.back().block.push_back(temp);
 		    }
 		    else
 		    {
