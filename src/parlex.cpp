@@ -253,7 +253,7 @@ namespace Parlex
 	if(t->cat == TokenType::Punc_Open)
 	{
 	    t++; //eat punc
-	    do
+	    while (t->cat != TokenType::Punc_Close)
 	    {
 		if(t->cat == TokenType::Keyword)
 		{
@@ -386,7 +386,7 @@ namespace Parlex
 		    std::cout << "[DEBUG ERROR SPEW] bad token val is: " << t->val << "\n";
 		    throw std::runtime_error("[Parser] unexpected non-keyword in section");
 		}
-	    } while (t->cat != TokenType::Punc_Close);
+	    }
 	}
 	else
 	    throw std::runtime_error("[Parser] section label not followed by '{'");
