@@ -2,6 +2,7 @@
 * Visual Novel engine in c++
 * MAJOR TODOS
 - implement if in parse and lex
+- tests
 - implement script VM
 - implement graphics
 
