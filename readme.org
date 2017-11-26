@@ -45,18 +45,19 @@ In addition to the setup/main distinction of keywords, they can also be split be
 | fin     | x     | logical           | End VN, showing text x                              |
 
 *** Keyword arg names
-|---------+------------------|
-| Keyword | arg names        |
-|---------+------------------|
-| speaker | alias name color |
-| var     | name             |
-| set     | var val          |
-| bg      | path             |
-| show    | path             |
-| menu    |                  |
-| jump    | target           |
-| if      |                  |
-| fin     | message          |
+|---------------+------------------|
+| Keyword       | arg names        |
+|---------------+------------------|
+| speaker setup | alias name color |
+| speaker       | name speech      |
+| var           | name             |
+| set           | var val          |
+| bg            | path             |
+| show          | path             |
+| menu          |                  |
+| jump          | target           |
+| if            |                  |
+| fin           | message          |
 
 Internally any "setup" keywords (speaker, var) are stripped on inital parse, leaving only the statements.
 

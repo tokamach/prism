@@ -277,10 +277,14 @@ namespace Parlex
 		    else if (t->val == "fin")
 		    {
 			t++;
-			string msg = t->val;
+			string msg;
+			while(t->cat == TokenType::Arg)
+			{
+			    msg += t->val;
+			    t++;
+			}
 			tree->sections.back().block.push_back(Node{NodeType::Fin, {},
 				{{"message", msg}}});
-			t++;
 		    }
 		    else if (t->val == "jump")
 		    {
@@ -288,6 +292,7 @@ namespace Parlex
 			string label = t->val;
 			tree->sections.back().block.push_back(Node{NodeType::Jump, {},
 				{{"target", label}}});
+			t++;
 		    }
 		    else if (t->val == "set")
 		    {
@@ -298,6 +303,7 @@ namespace Parlex
 			tree->sections.back().block.push_back(Node{NodeType::Set, {},
 				{{"var", var},
 				 {"val", value}}});
+			t++;
 		    }
 		    else if (t->val == "if")
 		    {
@@ -351,12 +357,6 @@ namespace Parlex
 
 			t++;
 		    }
-		    //TODO: SERIOUSLY CHANGE THIS ITS JUST DEBUGGING ITS VERY WRONG SENPAI
-		    else if (t->val == "a" || t->val == "b")
-		    {
-			//TODO: before throwing error, check if keyword appears in character name
-			//      table, meaning this is a speaker Node
-		    }
 		    else
 		    {
 			//TODO: tell us which keyword
@@ -364,16 +364,34 @@ namespace Parlex
 			throw std::runtime_error("[Parser] invalid keyword in section");
 		    }
 		}
+		else if(t->cat == TokenType::Ident_Speaker)
+		{
+		    string speaking = t->val;
+		    t++;
+		    
+		    string speech;
+		    while(t->cat == TokenType::Dialogue_String)
+		    {
+			//TODO: don't just randomly space pad end, do it smart
+			speech += t->val + " ";
+			t++;
+		    }
+
+		    tree->sections.back().block.push_back(Node{NodeType::Speaker, {},
+			    {{"name", speaking},
+			     {"speech", speech}}});
+		}
 		else
 		{
 		    std::cout << "[DEBUG ERROR SPEW] bad token val is: " << t->val << "\n";
 		    throw std::runtime_error("[Parser] unexpected non-keyword in section");
 		}
 	    } while (t->cat != TokenType::Punc_Close);
-	    
 	}
 	else
 	    throw std::runtime_error("[Parser] section label not followed by '{'");
+
+	t++; //eat final PUNC_CLOSE
     }
 
     void Parser::parseSetup()
@@ -427,11 +445,11 @@ namespace Parlex
 	if(t->cat == TokenType::Setup)
 	{
 	    parseSetup();
-	    if(t->cat == TokenType::Ident_Section)
-	    {
+
+	    while(t->cat == TokenType::Ident_Section)
 		parseSection();
-	    }
-	    else throw std::runtime_error("[Parser] non label after setup block");
+
+	    //else throw std::runtime_error("[Parser] non label after setup block");
 	}
 	else throw std::runtime_error("[Parser] tokl did not start in setup block");
 
