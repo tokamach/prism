@@ -41,7 +41,7 @@ std::map<NodeType, std::string> nodeNameMap =
     {NodeType::Set, "Set"},
     {NodeType::Menu, "Menu"},
     {NodeType::If, "If"},
-    {NodeType::None, "None"}
+    {NodeType::Data, "Data"}
 };
 
 void printNode(Node node, int indent = 0)
