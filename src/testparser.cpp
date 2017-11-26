@@ -101,9 +101,7 @@ int main()
     std::cout << "Setup Block:\n";
     for (auto node : ast->setup.block)
     {
-	std::cout << "Node : " << nodeNameMap[node.type] << "\n";
-	for (const auto &arg : node.args)
-	    std::cout << " - " << arg.first << " : " << arg.second << "\n";
+	printNode(node);
 	std::cout << "\n";
     }
 
