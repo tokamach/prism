@@ -2,8 +2,10 @@
 * Visual Novel engine in c++
 * MAJOR TODOS
 - implement if in parse and lex
+- implement script VM
+- implement graphics
 
-* Parsing
+* Parlex
 ** Lexer
 The lexer is rather smart in order to accurately tag all tokens without ambiguity, keeping track of Scope, Speakers, and vars.
 ** Parser
@@ -18,7 +20,21 @@ The lexer is rather smart in order to accurately tag all tokens without ambiguit
     use A-Z for text/label combo names
     this allows for 26 max
 
-* Script
+* VM
+Prism can be viewed as an interpreter for the Prism Script language. It's only variable state is the global variables based on user decisions, and the current position in the script itself.
+
+** Pseudocode
+- read setup section
+  - add speaker to char name table
+  - add variables to var table
+
+- read main section
+  - determine current node keyword type
+    - dispatch logical or graphical to either VM or game
+      - logical: update internal state
+      - graphical: perform action
+	
+* Script Format
 - script begins with a setup block, where speakers are defined
 - followed by individually labeled sections
 - setup keywords must be within setup block
@@ -100,15 +116,3 @@ main
 }
 #+END_EXAMPLE
 
-* Architecture
-** Script VM
-Prism can be viewed as an interpreter for the Prism Script language. It's only state is the global variables based on user decisions, and the current position in the script itself.
-
-** Main loop
-1. Iterate to next node in script AST
-2. Parse command (show image, show text, show menu)
-3. (optional) Accept user input from menu
-4. Perform relevant action, whether logical or graphical
-
-* Util
-** Write utility to convert to Prismscript from other formats, such as Ren'Py
