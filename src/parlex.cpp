@@ -315,11 +315,9 @@ namespace Parlex
 		    }
 		    else if (t->val == "menu")
 		    {
-			while(t->cat != TokenType::Ident_Speaker)
-			    t++;
 			//TODO: check for all cases and throw errors when appropriate
 			//TODO: let menu have more than two options in parse
-			/*
+
 			t++; //eat keyword
 			t++; //eat punc_open_menu
 
@@ -334,6 +332,7 @@ namespace Parlex
 
 			t++; //eat punc_mid_menu
 			string menuLabelA = t->val; // set jump label A
+			t++;
 
 			t++;
 			t++; //eat punc close and open
@@ -358,8 +357,7 @@ namespace Parlex
 				    {"text_b", menuTextB}}});
 
 			t++;
-
-			*/
+			t++; // eat jump label and PUNC_END
 		    }
 		    else
 		    {
