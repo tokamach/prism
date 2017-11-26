@@ -238,22 +238,158 @@ namespace Parlex
 
     void Parser::parseSection()
     {
-	
+	//pseudo:
+	//move to, check, then eat the PUNC_OPEN token (t++)
+	//do while until token is PUNC_CLOSE
+	//  ensure token is KEYWORD
+	//    switch on t->val for different keyword type
+	//      t++ and add each arg according to keyword type
+
+
+	//add section node, with arg "label" as sections label
+	tree->sections.push_back(Node{NodeType::Section, {}, {{"label", t->val}}});
+
+	t++; //advance to punc
+	if(t->cat == TokenType::Punc_Open)
+	{
+	    t++; //eat punc
+	    do
+	    {
+		if(t->cat == TokenType::Keyword)
+		{
+		    //can't switch on strings, so if else chain
+		    if(t->val == "bg")
+		    {
+			t++; //eat keyword
+			string img = t->val; //bg img pseudopath
+			tree->sections.back().block.push_back(Node{NodeType::Bg, {},
+				{{"path", img}}});
+			t++; //eat pseudopath
+		    }
+		    else if (t->val == "show")
+		    {
+			t++;
+			string img = t->val;
+			tree->sections.back().block.push_back(Node{NodeType::Show, {},
+				{{"path", img}}});
+			t++;
+		    }
+		    else if (t->val == "fin")
+		    {
+			t++;
+			string msg = t->val;
+			tree->sections.back().block.push_back(Node{NodeType::Fin, {},
+				{{"message", msg}}});
+			t++;
+		    }
+		    else if (t->val == "jump")
+		    {
+			t++;
+			string label = t->val;
+			tree->sections.back().block.push_back(Node{NodeType::Jump, {},
+				{{"target", label}}});
+		    }
+		    else if (t->val == "set")
+		    {
+			t++;
+			string var = t->val;
+			t++;
+			string value = t->val;
+			tree->sections.back().block.push_back(Node{NodeType::Set, {},
+				{{"var", var},
+				 {"val", value}}});
+		    }
+		    else if (t->val == "if")
+		    {
+			//TODO: implement if
+		    }
+		    else if (t->val == "none")
+		    {
+			//TODO: you know this actually is never lexed
+		    }
+		    else if (t->val == "menu")
+		    {
+			//TODO: check for all cases and throw errors when appropriate
+			//TODO: let menu have more than two options in parse
+			
+			t++; //eat keyword
+			t++; //eat punc_open_menu
+
+			// fill first menuText arg
+			string menuTextA;
+			while(t->cat == TokenType::Dialogue_String)
+			{
+			    //TODO: don't just randomly space pad end, do it smart
+			    menuTextA += t->val + " ";
+			    t++;
+			}
+
+			t++; //eat punc_mid_menu
+			string menuLabelA = t->val; // set jump label A
+
+			t++;
+			t++; //eat punc close and open
+
+			// fill second menuText arg
+			string menuTextB;
+			while(t->cat == TokenType::Dialogue_String)
+			{
+			    //TODO: don't just randomly space pad end, do it smart
+			    menuTextB += t->val + " ";
+			    t++;
+			}
+
+			t++; //eat punc_mid_menu
+			string menuLabelB = t->val; // set jump label A
+
+			// temp use args instead of node block
+			tree->sections.back().block.push_back(Node{NodeType::Menu, {},
+				   {{"label_a", menuLabelA},
+				    {"text_a", menuTextA},
+				    {"label_b", menuLabelB},
+				    {"text_b", menuTextB}}});
+
+			t++;
+		    }
+		    //TODO: SERIOUSLY CHANGE THIS ITS JUST DEBUGGING ITS VERY WRONG SENPAI
+		    else if (t->val == "a" || t->val == "b")
+		    {
+			//TODO: before throwing error, check if keyword appears in character name
+			//      table, meaning this is a speaker Node
+		    }
+		    else
+		    {
+			//TODO: tell us which keyword
+			std::cout << "[DEBUG ERROR SPEW] bad keyword is: " << t->val << "\n";
+			throw std::runtime_error("[Parser] invalid keyword in section");
+		    }
+		}
+		else
+		{
+		    std::cout << "[DEBUG ERROR SPEW] bad token val is: " << t->val << "\n";
+		    throw std::runtime_error("[Parser] unexpected non-keyword in section");
+		}
+	    } while (t->cat != TokenType::Punc_Close);
+	    
+	}
+	else
+	    throw std::runtime_error("[Parser] section label not followed by '{'");
     }
 
     void Parser::parseSetup()
     {
 	tree->setup = Node{NodeType::Setup, {}, {}};
-	t++;
+
+	t++; //advance to punc
 	if(t->cat == TokenType::Punc_Open)
 	{
-	    //TODO: loop this section
-	    t++;
+	    t++; //eat punc
 	    do
 	    {
 		if(t->cat == TokenType::Keyword)
 		{
 		    //only check for speaker and var since we in setup
+		    //TODO: add speaker to character name table, for use in parsing
 		    if(t->val == "speaker")
 		    {
 			t++;

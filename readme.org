@@ -1,5 +1,11 @@
 # -*- olivetti-body-width: 94; -*-
 * Visual Novel engine in c++
+* MAJOR TODOS
+- implement character table in parlex
+- implement If in parse and lex
+- properly parse menu with multiple options using node block, lex is done
+- remove redundant None node type
+
 * Parsing
 ** Lexer
 The lexer is rather smart in order to accurately tag all tokens without ambiguity, keeping track of Scope, Speakers, and vars.
@@ -7,8 +13,13 @@ The lexer is rather smart in order to accurately tag all tokens without ambiguit
 - Simple Finite State Automaton should be fine, as the script format currently does not allow nested labels and will not need to be a Pushdown Automaton or LL(1) parser.
 - Or go all out and do an RDP
 
-- future note for yourself
-  rather than using an explicit stack to store program state like in the lexer you've decided to use recursive fnuctions, as in a recursive descent parser. ideally the stack should more than accomodate for this, but I guess change it if it doesn't work
+- future notes for yourself
+  - rather than using an explicit stack to store program state like in the lexer you've decided to use recursive fnuctions, as in a recursive descent parser. ideally the stack should more than accomodate for this, but I guess change it if it doesn't work
+  - menu is a bitch:
+    allow for multiple options
+    use node block to store text/label combos!
+    use A-Z for text/label combo names
+    this allows for 26 max
 
 * Script
 - script begins with a setup block, where speakers are defined
@@ -32,6 +43,20 @@ In addition to the setup/main distinction of keywords, they can also be split be
 | jump    | x     | logical           | Jump to label X                                     |
 | if      | x &y  | logical           | conditional statement on global var, see if section |
 | fin     | x     | logical           | End VN, showing text x                              |
+
+*** Keyword arg names
+|---------+------------------|
+| Keyword | arg names        |
+|---------+------------------|
+| speaker | alias name color |
+| var     | name             |
+| set     | var val          |
+| bg      | path             |
+| show    | path             |
+| menu    |                  |
+| jump    | target           |
+| if      |                  |
+| fin     | message          |
 
 Internally any "setup" keywords (speaker, var) are stripped on inital parse, leaving only the statements.
 
